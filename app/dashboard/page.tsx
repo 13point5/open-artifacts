@@ -1,9 +1,9 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
+import { ChatPanel } from "@/components/chat/panel";
+import { SideNavBar } from "@/components/side-navbar";
 import { useSupabaseClient } from "@/lib/hooks/useSupabaseClient";
-import { SignOutButton, useAuth } from "@clerk/nextjs";
-import { useEffect } from "react";
+import { useAuth } from "@clerk/nextjs";
 
 export default function Chat() {
   const { userId } = useAuth();
@@ -24,14 +24,11 @@ export default function Chat() {
     console.log("data, error", data, error);
   };
 
-  useEffect(() => {
-    fetchChats();
-  }, []);
-
   return (
-    <div className="flex flex-col w-full max-w-md py-24 mx-auto stretch">
-      <SignOutButton />
-      <Button onClick={createChat}>Create chat</Button>
+    <div className="flex gap-4 w-full h-screen max-h-screen overflow-hidden px-2 pl-0">
+      <SideNavBar />
+
+      <ChatPanel />
     </div>
   );
 }
