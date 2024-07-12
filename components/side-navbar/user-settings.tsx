@@ -1,48 +1,49 @@
+"use client";
+
 import { Button } from "@/components/ui/button";
 import { SettingsIcon } from "lucide-react";
 import {
   Dialog,
   DialogContent,
-  DialogDescription,
   DialogFooter,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { useToast } from "@/components/ui/use-toast";
+import {
+  getSettings,
+  SettingsSchema,
+  settingsSchema,
+  updateSettings,
+} from "@/lib/userSettings";
 
 type Props = {
   showLabel?: boolean;
 };
 
-const settingsSchema = z.object({
-  claudeApiKey: z.string(),
-  openaiApiKey: z.string(),
-});
-
 export const UserSettings = ({ showLabel = false }: Props) => {
-  const form = useForm<z.infer<typeof settingsSchema>>({
+  const { toast } = useToast();
+
+  const form = useForm<SettingsSchema>({
     resolver: zodResolver(settingsSchema),
-    defaultValues: {
-      claudeApiKey: "",
-      openaiApiKey: "",
-    },
+    defaultValues: getSettings(),
   });
 
-  function onSubmit(values: z.infer<typeof settingsSchema>) {
-    console.log(values);
+  function onSubmit(values: SettingsSchema) {
+    updateSettings(values);
+    toast({ title: "✅ Updated Settings!" });
   }
 
   return (
@@ -53,9 +54,9 @@ export const UserSettings = ({ showLabel = false }: Props) => {
         {showLabel && <span className="font-medium text-sm">Settings</span>}
       </DialogTrigger>
 
-      <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-          <DialogContent>
+      <DialogContent>
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
             <DialogHeader>
               <DialogTitle>Settings</DialogTitle>
             </DialogHeader>
@@ -92,9 +93,9 @@ export const UserSettings = ({ showLabel = false }: Props) => {
               <Button variant="outline">Cancel</Button>
               <Button type="submit">Save</Button>
             </DialogFooter>
-          </DialogContent>
-        </form>
-      </Form>
+          </form>
+        </Form>
+      </DialogContent>
     </Dialog>
   );
 };
