@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { useEnterSubmit } from "@/lib/hooks/use-enter-submit";
-import { ArrowUpIcon } from "lucide-react";
+import { ArrowUpIcon, Loader2Icon } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import Textarea from "react-textarea-autosize";
 import {
@@ -13,13 +13,17 @@ import {
 } from "@/components/ui/select";
 import { Models } from "@/app/types";
 
-export const ChatInput = () => {
-  const [input, setInput] = useState("");
+type Props = {
+  input: string;
+  setInput: (value: string) => void;
+  onSubmit: () => void;
+  isLoading: boolean;
+};
+
+export const ChatInput = ({ input, setInput, onSubmit, isLoading }: Props) => {
   const inputRef = useRef<HTMLTextAreaElement>(null);
   const { onKeyDown } = useEnterSubmit({
-    onSubmit: () => {
-      console.log("handleSubmit");
-    },
+    onSubmit,
   });
 
   useEffect(() => {
@@ -48,8 +52,17 @@ export const ChatInput = () => {
             onChange={(e) => setInput(e.target.value)}
           />
 
-          <Button size="icon" className="w-8 h-8">
-            <ArrowUpIcon className="w-4 h-4" />
+          <Button
+            onClick={onSubmit}
+            size="icon"
+            className="w-8 h-8"
+            disabled={isLoading}
+          >
+            {isLoading ? (
+              <Loader2Icon className="w-4 h-4 animate-spin" />
+            ) : (
+              <ArrowUpIcon className="w-4 h-4" />
+            )}
           </Button>
         </div>
 

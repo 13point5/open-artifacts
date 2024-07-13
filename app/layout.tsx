@@ -4,6 +4,7 @@ import "./globals.css";
 import { ClerkProvider } from "@clerk/nextjs";
 import { cn } from "@/lib/utils";
 import { Toaster } from "@/components/ui/toaster";
+import ReactQueryProvider from "@/app/react-query-provider";
 
 const fontSans = FontSans({
   subsets: ["latin"],
@@ -21,19 +22,18 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <ClerkProvider>
-      <html lang="en">
-        <body
-          className={cn(
-            "min-h-screen font-sans antialiased",
-            fontSans.variable
-          )}
-        >
-          {children}
+    <html lang="en">
+      <body
+        className={cn("min-h-screen font-sans antialiased", fontSans.variable)}
+      >
+        <ClerkProvider>
+          <ReactQueryProvider>
+            {children}
 
-          <Toaster />
-        </body>
-      </html>
-    </ClerkProvider>
+            <Toaster />
+          </ReactQueryProvider>
+        </ClerkProvider>
+      </body>
+    </html>
   );
 }

@@ -68,7 +68,7 @@ export const UserSettings = ({ showLabel = false }: Props) => {
                 <FormItem>
                   <FormLabel>Claude API Key</FormLabel>
                   <FormControl>
-                    <Input {...field} />
+                    <Input {...field} type="password" />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -82,7 +82,7 @@ export const UserSettings = ({ showLabel = false }: Props) => {
                 <FormItem>
                   <FormLabel>OpenAI API Key</FormLabel>
                   <FormControl>
-                    <Input {...field} />
+                    <Input {...field} type="password" />
                   </FormControl>
                   <FormMessage />
                 </FormItem>

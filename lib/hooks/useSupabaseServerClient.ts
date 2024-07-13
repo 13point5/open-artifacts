@@ -1,9 +1,9 @@
 import { Database } from "@/app/supabase.types";
-import { useAuth } from "@clerk/nextjs";
+import { auth } from "@clerk/nextjs/server";
 import { createClient } from "@supabase/supabase-js";
 
-export const useSupabaseClient = () => {
-  const { getToken } = useAuth();
+export const useSupabaseServerClient = () => {
+  const { getToken } = auth();
 
   const getClient = async () => {
     const token = await getToken({ template: "supabase" });

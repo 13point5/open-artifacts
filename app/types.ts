@@ -1,5 +1,5 @@
 export enum ChatMessageRoles {
-  human = "human",
+  user = "user",
   ai = "ai",
 }
 
