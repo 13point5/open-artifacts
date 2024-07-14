@@ -11,6 +11,7 @@ import { Loader2Icon } from "lucide-react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 import { useSupabase } from "@/lib/supabase";
+import { Chat } from "@/app/types";
 
 type ArtifactData = {
   title: string;
@@ -31,12 +32,16 @@ export const ChatPanel = ({ id }: Props) => {
 
   const [initialMessages, setInitialMessages] = useState<Message[]>([]);
   const [fetchingMessages, setFetchingMessages] = useState(false);
-  const [queuedMessages, setQueuedMessages] = useState<Message[]>([]);
+  const [queuedMessages, setQueuedMessages] = useState<
+    { role: string; content: string }[]
+  >([]);
 
   const fetchMessages = async () => {
     if (chatId) {
       setFetchingMessages(true);
+
       const messages = await getChatMessages(supabase, chatId);
+
       setInitialMessages(
         messages.map((message) => ({
           id: String(message.id),
@@ -44,6 +49,7 @@ export const ChatPanel = ({ id }: Props) => {
           content: message.text,
         }))
       );
+
       setFetchingMessages(false);
     } else {
       setInitialMessages([]);
@@ -56,10 +62,10 @@ export const ChatPanel = ({ id }: Props) => {
 
   const createChatMutation = useMutation({
     mutationFn: async (title: string) =>
-      createChat(supabase, title, session?.user.id),
+      await createChat(supabase, title, session?.user.id),
     onSuccess: (newChat) => {
       // Update the cache with the new chat
-      queryClient.setQueryData(["chats"], (oldChats) => {
+      queryClient.setQueryData<Chat[]>(["chats"], (oldChats) => {
         return [...(oldChats || []), newChat];
       });
 
@@ -112,7 +118,7 @@ export const ChatPanel = ({ id }: Props) => {
   const handleSend = async () => {
     if (input.trim()) {
       const message = { role: "user", content: input };
-      append(message);
+      append({ role: "user", content: input });
       setInput("");
       if (chatId) {
         await addMessage(supabase, chatId, message);

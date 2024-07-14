@@ -29,7 +29,6 @@ export const SideNavBar = () => {
     queryFn: async () => await getChats(supabase, userId),
     enabled: !!userId,
   });
-  console.log("chats", chats);
 
   if (open) {
     return (
@@ -106,9 +105,3 @@ export const SideNavBar = () => {
     </div>
   );
 };
-
-const generateChats = (count: number) =>
-  Array.from({ length: count }).map((_, index) => ({
-    selected: index === 0,
-    title: `${index} Blalalalalallalalalallabbababababab`,
-  }));

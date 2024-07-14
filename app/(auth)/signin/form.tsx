@@ -75,7 +75,7 @@ const SignInForm = () => {
     }
 
     setFormStatus(FormStatus.Success);
-    toast.success("Signed In! Redirecting to your dashboard", {
+    toast.success("Signed In! Taking you to the app", {
       position: "bottom-center",
     });
   };
