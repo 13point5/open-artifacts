@@ -58,7 +58,7 @@ export const ChatPanel = ({ id }: Props) => {
 
   useEffect(() => {
     fetchMessages();
-  }, [chatId]);
+  }, []);
 
   const createChatMutation = useMutation({
     mutationFn: async (title: string) =>
