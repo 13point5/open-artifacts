@@ -21,21 +21,19 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { useToast } from "@/components/ui/use-toast";
 import {
   getSettings,
   SettingsSchema,
   settingsSchema,
   updateSettings,
 } from "@/lib/userSettings";
+import toast from "react-hot-toast";
 
 type Props = {
   showLabel?: boolean;
 };
 
 export const UserSettings = ({ showLabel = false }: Props) => {
-  const { toast } = useToast();
-
   const form = useForm<SettingsSchema>({
     resolver: zodResolver(settingsSchema),
     defaultValues: getSettings(),
@@ -43,7 +41,9 @@ export const UserSettings = ({ showLabel = false }: Props) => {
 
   function onSubmit(values: SettingsSchema) {
     updateSettings(values);
-    toast({ title: "✅ Updated Settings!" });
+    toast.success("Saved settings!", {
+      position: "bottom-center",
+    });
   }
 
   return (

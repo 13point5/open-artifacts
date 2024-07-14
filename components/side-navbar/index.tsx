@@ -3,9 +3,9 @@
 import { ChatItem } from "@/components/side-navbar/chat-item";
 import { UserSettings } from "@/components/side-navbar/user-settings";
 import { Button } from "@/components/ui/button";
+import { UserButton } from "@/components/user-button";
 import { getChats } from "@/lib/db";
-import { useSupabaseClient } from "@/lib/hooks/useSupabaseClient";
-import { SignedIn, useAuth, UserButton } from "@clerk/nextjs";
+import { useSupabase } from "@/lib/supabase";
 import { useQuery } from "@tanstack/react-query";
 import { Loader2Icon, SidebarIcon, SquarePenIcon } from "lucide-react";
 import Link from "next/link";
@@ -16,10 +16,9 @@ export const SideNavBar = () => {
   const [open, setOpen] = useState(false);
 
   const params = useParams();
-  console.log("params.id", params.id);
 
-  const { userId } = useAuth();
-  const { getClient } = useSupabaseClient();
+  const { supabase, session } = useSupabase();
+  const userId = session?.user.id;
 
   const {
     data: chats,
@@ -27,7 +26,7 @@ export const SideNavBar = () => {
     isLoading,
   } = useQuery({
     queryKey: ["chats"],
-    queryFn: async () => await getChats(getClient, userId),
+    queryFn: async () => await getChats(supabase, userId),
     enabled: !!userId,
   });
   console.log("chats", chats);
@@ -74,30 +73,7 @@ export const SideNavBar = () => {
 
         <div className="flex flex-col gap-4 mt-2">
           <UserSettings showLabel />
-
-          <UserButton
-            showName
-            appearance={{
-              elements: {
-                userButtonBox: {
-                  flexDirection: "row-reverse",
-                },
-                userButtonOuterIdentifier: {
-                  fontSize: "14px",
-                  overflow: "hidden",
-                  textOverflow: "ellipsis",
-                  whiteSpace: "nowrap",
-                },
-                userButtonTrigger: {
-                  padding: "0 4px",
-                },
-                avatarBox: {
-                  width: "24px",
-                  height: "24px",
-                },
-              },
-            }}
-          />
+          <UserButton expanded />
         </div>
       </div>
     );
@@ -125,19 +101,7 @@ export const SideNavBar = () => {
 
       <div className="flex flex-col items-center gap-4">
         <UserSettings />
-
-        <SignedIn>
-          <UserButton
-            appearance={{
-              elements: {
-                avatarBox: {
-                  width: "24px",
-                  height: "24px",
-                },
-              },
-            }}
-          />
-        </SignedIn>
+        <UserButton />
       </div>
     </div>
   );

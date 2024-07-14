@@ -1,17 +1,12 @@
-import { Database } from "@/app/supabase.types";
-import { SupabaseClient } from "@supabase/supabase-js";
-
-type GetClient = () => Promise<SupabaseClient<Database>>;
+import { SupabaseContextType } from "@/lib/supabase/types";
 
 export const getChats = async (
-  getClient: GetClient,
+  supabase: SupabaseContextType["supabase"],
   userId: string | null | undefined
 ) => {
   if (!userId) throw new Error("User not authenticated");
 
-  const dbClient = await getClient();
-
-  const { data, error } = await dbClient
+  const { data, error } = await supabase
     .from("chats")
     .select("*")
     .eq("user_id", userId);
@@ -25,14 +20,12 @@ export const getChats = async (
 };
 
 export const getChatMessages = async (
-  getClient: GetClient,
+  supabase: SupabaseContextType["supabase"],
   id: string | null
 ) => {
   if (!id) return [];
 
-  const dbClient = await getClient();
-
-  const { data, error } = await dbClient
+  const { data, error } = await supabase
     .from("messages")
     .select("*")
     .eq("chat_id", id)
@@ -47,7 +40,7 @@ export const getChatMessages = async (
 };
 
 export const createChat = async (
-  getClient: GetClient,
+  supabase: SupabaseContextType["supabase"],
   title: string,
   userId: string | null | undefined
 ) => {
@@ -55,9 +48,7 @@ export const createChat = async (
     throw new Error("User not authenticated");
   }
 
-  const dbClient = await getClient();
-
-  const { data, error } = await dbClient
+  const { data, error } = await supabase
     .from("chats")
     .insert({
       title,
@@ -78,18 +69,13 @@ export const createChat = async (
 };
 
 export const addMessage = async (
-  getClient: GetClient,
+  supabase: SupabaseContextType["supabase"],
   chatId: string | null,
   message: { role: string; content: string }
 ) => {
-  console.log("addmessage chatId", chatId);
   if (!chatId) return message;
 
-  console.log("addmessage message", message);
-
-  const dbClient = await getClient();
-
-  const { error } = await dbClient.from("messages").insert({
+  const { error } = await supabase.from("messages").insert({
     chat_id: chatId,
     role: message.role,
     text: message.content,

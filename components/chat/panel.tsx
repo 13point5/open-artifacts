@@ -5,13 +5,12 @@ import { ChatInput } from "@/components/chat/input";
 import { ChatMessageList } from "@/components/chat/message-list";
 import { useCallback, useEffect, useState } from "react";
 import { Message, useChat } from "ai/react";
-import { useAuth } from "@clerk/nextjs";
-import { useSupabaseClient } from "@/lib/hooks/useSupabaseClient";
 import { getSettings } from "@/lib/userSettings";
 import { addMessage, createChat, getChatMessages } from "@/lib/db";
 import { Loader2Icon } from "lucide-react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
+import { useSupabase } from "@/lib/supabase";
 
 type ArtifactData = {
   title: string;
@@ -24,9 +23,8 @@ type Props = {
 };
 
 export const ChatPanel = ({ id }: Props) => {
-  const { userId } = useAuth();
   const settings = getSettings();
-  const { getClient } = useSupabaseClient();
+  const { supabase, session } = useSupabase();
   const queryClient = useQueryClient();
 
   const [chatId, setChatId] = useState(id);
@@ -38,7 +36,7 @@ export const ChatPanel = ({ id }: Props) => {
   const fetchMessages = async () => {
     if (chatId) {
       setFetchingMessages(true);
-      const messages = await getChatMessages(getClient, chatId);
+      const messages = await getChatMessages(supabase, chatId);
       setInitialMessages(
         messages.map((message) => ({
           id: String(message.id),
@@ -57,7 +55,8 @@ export const ChatPanel = ({ id }: Props) => {
   }, [chatId]);
 
   const createChatMutation = useMutation({
-    mutationFn: async (title: string) => createChat(getClient, title, userId),
+    mutationFn: async (title: string) =>
+      createChat(supabase, title, session?.user.id),
     onSuccess: (newChat) => {
       // Update the cache with the new chat
       queryClient.setQueryData(["chats"], (oldChats) => {
@@ -83,7 +82,7 @@ export const ChatPanel = ({ id }: Props) => {
     },
     onFinish: async (message) => {
       if (chatId) {
-        await addMessage(getClient, chatId, message);
+        await addMessage(supabase, chatId, message);
       } else {
         setQueuedMessages((prev) => [...prev, message]);
       }
@@ -102,7 +101,7 @@ export const ChatPanel = ({ id }: Props) => {
     const sendQueuedMessages = async () => {
       if (chatId && queuedMessages.length > 0) {
         for (const message of queuedMessages) {
-          await addMessage(getClient, chatId, message);
+          await addMessage(supabase, chatId, message);
         }
         setQueuedMessages([]);
       }
@@ -116,7 +115,7 @@ export const ChatPanel = ({ id }: Props) => {
       append(message);
       setInput("");
       if (chatId) {
-        await addMessage(getClient, chatId, message);
+        await addMessage(supabase, chatId, message);
       } else {
         setQueuedMessages((prev) => [...prev, message]);
       }
