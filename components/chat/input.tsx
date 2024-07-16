@@ -35,7 +35,7 @@ export const ChatInput = ({ input, setInput, onSubmit, isLoading }: Props) => {
   return (
     <div className="sticky bottom-0 mx-auto w-full pt-6 ">
       <div className="flex flex-col gap-1 bg-[#F4F4F4] p-2.5 pl-4 rounded-md border border-b-0 rounded-b-none shadow-md">
-        <div className="flex gap-2 items-center">
+        <div className="flex gap-2 items-start">
           <Textarea
             ref={inputRef}
             tabIndex={0}
@@ -66,7 +66,7 @@ export const ChatInput = ({ input, setInput, onSubmit, isLoading }: Props) => {
           </Button>
         </div>
 
-        <Select defaultValue={Models.claude}>
+        {/* <Select defaultValue={Models.claude}>
           <SelectTrigger className="w-fit bg-transparent flex items-center gap-2">
             <SelectValue placeholder="Model" />
           </SelectTrigger>
@@ -74,7 +74,7 @@ export const ChatInput = ({ input, setInput, onSubmit, isLoading }: Props) => {
             <SelectItem value={Models.claude}>Claude</SelectItem>
             <SelectItem value={Models.gpt4o}>GPT 4-o</SelectItem>
           </SelectContent>
-        </Select>
+        </Select> */}
       </div>
     </div>
   );
