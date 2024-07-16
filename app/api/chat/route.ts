@@ -13,6 +13,10 @@ export async function POST(req: Request) {
     model: anthropic("claude-3-5-sonnet-20240620"),
     messages,
     system: claudeSystemPrompt,
+    maxTokens: 8192,
+    headers: {
+      "anthropic-beta": "max-tokens-3-5-sonnet-2024-07-15",
+    },
   });
 
   return result.toAIStreamResponse();

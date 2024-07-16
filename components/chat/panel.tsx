@@ -11,7 +11,6 @@ import { Loader2Icon } from "lucide-react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useSupabase } from "@/lib/supabase";
 import { Chat } from "@/app/types";
-import { sampleMessages } from "@/lib/sampleMessages";
 import { ArtifactMessagePartData } from "@/lib/utils";
 
 type ArtifactData = {

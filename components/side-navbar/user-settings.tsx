@@ -75,7 +75,7 @@ export const UserSettings = ({ showLabel = false }: Props) => {
               )}
             />
 
-            <FormField
+            {/* <FormField
               control={form.control}
               name="openaiApiKey"
               render={({ field }) => (
@@ -87,7 +87,7 @@ export const UserSettings = ({ showLabel = false }: Props) => {
                   <FormMessage />
                 </FormItem>
               )}
-            />
+            /> */}
 
             <DialogFooter>
               <Button variant="outline">Cancel</Button>
