@@ -147,7 +147,6 @@ export const ArtifactViewer = ({ code }: PreviewScreenProps) => {
           presets: ["react"],
           plugins: [importToVariablePlugin],
         }).code;
-        console.log("transpiledCode", transpiledCode);
 
         const fullCode = `
           const exports = {};

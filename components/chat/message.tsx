@@ -42,7 +42,6 @@ export const ChatMessage = ({
   setCurrentArtifact,
 }: Props) => {
   const parts = parseMessage(text);
-  // console.log({ text, parts });
 
   return (
     <div
