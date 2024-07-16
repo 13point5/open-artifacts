@@ -5,7 +5,8 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
-type ArtifactMessagePartData = {
+export type ArtifactMessagePartData = {
+  generating: boolean;
   id: string | null;
   type: string | null;
   title: string | null;
@@ -15,16 +16,15 @@ type ArtifactMessagePartData = {
 export type MessagePart =
   | {
       type: "text";
-      content: string;
+      data: string;
     }
   | {
       type: "artifact";
-      generating: boolean;
-      data: null | ArtifactMessagePartData;
+      data: ArtifactMessagePartData;
     }
   | {
       type: "thought";
-      content: string | null;
+      data: string | null;
     };
 
 export function parseMessage(message: string): MessagePart[] {
@@ -37,7 +37,7 @@ export function parseMessage(message: string): MessagePart[] {
 
     if (char === "<") {
       if (buffer.trim()) {
-        parts.push({ type: "text", content: buffer.trim() });
+        parts.push({ type: "text", data: buffer.trim() });
         buffer = "";
       }
 
@@ -50,10 +50,11 @@ export function parseMessage(message: string): MessagePart[] {
       const tag = message.slice(i + 1, tagEnd);
 
       if (tag.startsWith("antthinking")) {
-        currentPart = { type: "thought", content: null };
+        currentPart = { type: "thought", data: null };
         i = tagEnd;
       } else if (tag.startsWith("antartifact")) {
         const data: ArtifactMessagePartData = {
+          generating: true,
           id: null,
           type: null,
           title: null,
@@ -70,12 +71,12 @@ export function parseMessage(message: string): MessagePart[] {
           else if (key === "title") data.title = value;
         }
 
-        currentPart = { type: "artifact", generating: true, data };
+        currentPart = { type: "artifact", data };
         i = tagEnd;
       } else if (tag === "/antthinking" || tag === "/antartifact") {
         if (currentPart) {
           if (currentPart.type === "artifact") {
-            currentPart.generating = false;
+            currentPart.data.generating = false;
           }
           parts.push(currentPart);
           currentPart = null;
@@ -84,7 +85,7 @@ export function parseMessage(message: string): MessagePart[] {
       }
     } else if (currentPart) {
       if (currentPart.type === "thought") {
-        currentPart.content = (currentPart.content || "") + char;
+        currentPart.data = (currentPart.data || "") + char;
       } else if (currentPart.type === "artifact" && currentPart.data) {
         currentPart.data.content += char;
       }
@@ -94,7 +95,7 @@ export function parseMessage(message: string): MessagePart[] {
   }
 
   if (buffer.trim()) {
-    parts.push({ type: "text", content: buffer.trim() });
+    parts.push({ type: "text", data: buffer.trim() });
   }
 
   if (currentPart) {
@@ -110,10 +111,10 @@ function combineTextParts(parts: MessagePart[]): MessagePart[] {
 
   for (const part of parts) {
     if (part.type === "text") {
-      currentTextContent += (currentTextContent ? " " : "") + part.content;
+      currentTextContent += (currentTextContent ? " " : "") + part.data;
     } else {
       if (currentTextContent) {
-        combinedParts.push({ type: "text", content: currentTextContent });
+        combinedParts.push({ type: "text", data: currentTextContent });
         currentTextContent = "";
       }
       combinedParts.push(part);
@@ -121,7 +122,7 @@ function combineTextParts(parts: MessagePart[]): MessagePart[] {
   }
 
   if (currentTextContent) {
-    combinedParts.push({ type: "text", content: currentTextContent });
+    combinedParts.push({ type: "text", data: currentTextContent });
   }
 
   return combinedParts;

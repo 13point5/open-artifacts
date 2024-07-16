@@ -49,7 +49,7 @@ export const ChatMessage = ({ role, model, text }: Props) => {
 };
 
 const MessagePart = ({ data }: { data: MessagePartType }) => {
-  if (data.type === "text") return <Markdown text={data.content} />;
+  if (data.type === "text") return <Markdown text={data.data} />;
 
   if (data.type === "artifact")
     return (
@@ -58,7 +58,7 @@ const MessagePart = ({ data }: { data: MessagePartType }) => {
         className="flex justify-start h-fit w-fit py-0 px-0 my-2"
       >
         <div className="w-14 h-full flex items-center justify-center border-r">
-          {data.generating ? (
+          {data.data.generating ? (
             <Loader2Icon className="animate-spin" />
           ) : (
             <CodeIcon />
