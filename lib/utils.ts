@@ -31,11 +31,12 @@ export function parseMessage(message: string): MessagePart[] {
   const parts: MessagePart[] = [];
   let currentPart: MessagePart | null = null;
   let buffer = "";
+  let i = 0;
 
-  for (let i = 0; i < message.length; i++) {
+  while (i < message.length) {
     const char = message[i];
 
-    if (char === "<") {
+    if (char === "<" && !currentPart) {
       if (buffer.trim()) {
         parts.push({ type: "text", data: buffer.trim() });
         buffer = "";
@@ -44,14 +45,14 @@ export function parseMessage(message: string): MessagePart[] {
       const tagEnd = message.indexOf(">", i);
       if (tagEnd === -1) {
         buffer += char;
+        i++;
         continue;
       }
 
       const tag = message.slice(i + 1, tagEnd);
-
       if (tag.startsWith("antthinking")) {
-        currentPart = { type: "thought", data: null };
-        i = tagEnd;
+        currentPart = { type: "thought", data: "" };
+        i = tagEnd + 1;
       } else if (tag.startsWith("antartifact")) {
         const data: ArtifactMessagePartData = {
           generating: true,
@@ -60,8 +61,6 @@ export function parseMessage(message: string): MessagePart[] {
           title: null,
           content: "",
         };
-
-        // New regex to properly handle quoted attributes
         const attributeRegex = /(\w+)="([^"]*)"/g;
         let match;
         while ((match = attributeRegex.exec(tag)) !== null) {
@@ -70,36 +69,47 @@ export function parseMessage(message: string): MessagePart[] {
           else if (key === "type") data.type = value;
           else if (key === "title") data.title = value;
         }
-
         currentPart = { type: "artifact", data };
-        i = tagEnd;
-      } else if (tag === "/antthinking" || tag === "/antartifact") {
-        if (currentPart) {
-          if (currentPart.type === "artifact") {
-            currentPart.data.generating = false;
-          }
-          parts.push(currentPart);
-          currentPart = null;
-        }
-        i = tagEnd;
+        i = tagEnd + 1;
+      } else {
+        buffer += char;
+        i++;
       }
     } else if (currentPart) {
-      if (currentPart.type === "thought") {
-        currentPart.data = (currentPart.data || "") + char;
-      } else if (currentPart.type === "artifact" && currentPart.data) {
-        currentPart.data.content += char;
+      const closingTag =
+        currentPart.type === "thought" ? "</antthinking>" : "</antartifact>";
+      const closingIndex = message.indexOf(closingTag, i);
+
+      if (closingIndex !== -1) {
+        const content = message.slice(i, closingIndex);
+        if (currentPart.type === "thought") {
+          currentPart.data = content;
+        } else if (currentPart.type === "artifact" && currentPart.data) {
+          currentPart.data.content = content;
+          currentPart.data.generating = false;
+        }
+        parts.push(currentPart);
+        currentPart = null;
+        i = closingIndex + closingTag.length;
+      } else {
+        // If no closing tag is found, treat the rest of the message as content
+        const remainingContent = message.slice(i);
+        if (currentPart.type === "thought") {
+          currentPart.data = remainingContent;
+        } else if (currentPart.type === "artifact" && currentPart.data) {
+          currentPart.data.content = remainingContent;
+        }
+        parts.push(currentPart);
+        break;
       }
     } else {
       buffer += char;
+      i++;
     }
   }
 
   if (buffer.trim()) {
     parts.push({ type: "text", data: buffer.trim() });
-  }
-
-  if (currentPart) {
-    parts.push(currentPart);
   }
 
   return combineTextParts(parts);

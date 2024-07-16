@@ -12,6 +12,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useSupabase } from "@/lib/supabase";
 import { Chat } from "@/app/types";
 import { sampleMessages } from "@/lib/sampleMessages";
+import { ArtifactMessagePartData } from "@/lib/utils";
 
 type ArtifactData = {
   title: string;
@@ -35,6 +36,8 @@ export const ChatPanel = ({ id }: Props) => {
   const [queuedMessages, setQueuedMessages] = useState<
     { role: string; content: string }[]
   >([]);
+  const [currentArtifact, setCurrentArtifact] =
+    useState<ArtifactMessagePartData | null>(null);
 
   const fetchMessages = async () => {
     if (chatId) {
@@ -129,9 +132,12 @@ export const ChatPanel = ({ id }: Props) => {
   return (
     <>
       <div className="relative flex w-full flex-1 overflow-x-hidden overflow-y-scroll pt-6">
-        <div className="relative mx-auto flex h-full w-full max-w-3xl flex-1 flex-col md:px-2">
+        <div className="relative mx-auto flex h-full w-full min-w-[400px] max-w-3xl flex-1 flex-col md:px-2">
           {fetchingMessages && <Loader2Icon className="animate-spin mx-auto" />}
-          <ChatMessageList messages={messages} />
+          <ChatMessageList
+            messages={messages}
+            setCurrentArtifact={setCurrentArtifact}
+          />
           <ChatInput
             input={input}
             setInput={setInput}
@@ -141,11 +147,18 @@ export const ChatPanel = ({ id }: Props) => {
         </div>
       </div>
 
-      {/* {artifactData && (
-        <div className="w-full h-full flex-1 pt-6 pb-4">
-          <ArtifactPanel />
+      {currentArtifact && (
+        <div className="w-full max-w-3xl h-full flex-1 pt-6 pb-4">
+          <ArtifactPanel
+            title={currentArtifact.title}
+            id={currentArtifact.id}
+            type={currentArtifact.type}
+            generating={currentArtifact.generating}
+            content={currentArtifact.content}
+            onClose={() => setCurrentArtifact(null)}
+          />
         </div>
-      )} */}
+      )}
     </>
   );
 };

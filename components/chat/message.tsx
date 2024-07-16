@@ -1,7 +1,13 @@
+"use client";
+
 import { ChatMessageRoles, Models } from "@/app/types";
 import Markdown from "@/components/markdown/markdown";
 import { Button } from "@/components/ui/button";
-import { MessagePart as MessagePartType, parseMessage } from "@/lib/utils";
+import {
+  ArtifactMessagePartData,
+  MessagePart as MessagePartType,
+  parseMessage,
+} from "@/lib/utils";
 import { CodeIcon, Loader2Icon } from "lucide-react";
 
 const getDisplayNameFromRole = (
@@ -26,10 +32,17 @@ type Props = {
   role: ChatMessageRoles;
   model: Models | null;
   text: string;
+  setCurrentArtifact: (data: ArtifactMessagePartData) => void;
 };
 
-export const ChatMessage = ({ role, model, text }: Props) => {
+export const ChatMessage = ({
+  role,
+  model,
+  text,
+  setCurrentArtifact,
+}: Props) => {
   const parts = parseMessage(text);
+  // console.log({ text, parts });
 
   return (
     <div
@@ -42,13 +55,23 @@ export const ChatMessage = ({ role, model, text }: Props) => {
       </span>
 
       {parts.map((part, index) => (
-        <MessagePart data={part} key={index} />
+        <MessagePart
+          data={part}
+          key={index}
+          setCurrentArtifact={setCurrentArtifact}
+        />
       ))}
     </div>
   );
 };
 
-const MessagePart = ({ data }: { data: MessagePartType }) => {
+const MessagePart = ({
+  data,
+  setCurrentArtifact,
+}: {
+  data: MessagePartType;
+  setCurrentArtifact: (data: ArtifactMessagePartData) => void;
+}) => {
   if (data.type === "text") return <Markdown text={data.data} />;
 
   if (data.type === "artifact")
@@ -56,6 +79,7 @@ const MessagePart = ({ data }: { data: MessagePartType }) => {
       <Button
         variant="outline"
         className="flex justify-start h-fit w-fit py-0 px-0 my-2"
+        onClick={() => setCurrentArtifact(data.data)}
       >
         <div className="w-14 h-full flex items-center justify-center border-r">
           {data.data.generating ? (
