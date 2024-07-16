@@ -41,8 +41,6 @@ export const ChatMessage = ({
   text,
   setCurrentArtifact,
 }: Props) => {
-  const parts = parseMessage(text);
-
   return (
     <div
       className={`flex flex-col gap-1 px-2 py-1 rounded-md ${
@@ -53,13 +51,16 @@ export const ChatMessage = ({
         {getDisplayNameFromRole(role, model)}
       </span>
 
-      {parts.map((part, index) => (
-        <MessagePart
-          data={part}
-          key={index}
-          setCurrentArtifact={setCurrentArtifact}
-        />
-      ))}
+      {role === "user" && <Markdown text={text} />}
+
+      {role === "assistant" &&
+        parseMessage(text).map((part, index) => (
+          <MessagePart
+            data={part}
+            key={index}
+            setCurrentArtifact={setCurrentArtifact}
+          />
+        ))}
     </div>
   );
 };
