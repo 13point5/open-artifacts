@@ -3,15 +3,15 @@
 import { ArtifactPanel } from "@/components/artifact";
 import { ChatInput } from "@/components/chat/input";
 import { ChatMessageList } from "@/components/chat/message-list";
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { Message, useChat } from "ai/react";
 import { getSettings } from "@/lib/userSettings";
 import { addMessage, createChat, getChatMessages } from "@/lib/db";
 import { Loader2Icon } from "lucide-react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { useRouter } from "next/navigation";
 import { useSupabase } from "@/lib/supabase";
 import { Chat } from "@/app/types";
+import { sampleMessages } from "@/lib/sampleMessages";
 
 type ArtifactData = {
   title: string;
@@ -95,8 +95,6 @@ export const ChatPanel = ({ id }: Props) => {
     },
   });
 
-  const [artifactData, setArtifactData] = useState<ArtifactData | null>(null);
-
   useEffect(() => {
     if (!chatId && messages.length === 1) {
       createChatMutation.mutate(messages[0].content.slice(0, 100));
@@ -143,11 +141,11 @@ export const ChatPanel = ({ id }: Props) => {
         </div>
       </div>
 
-      {artifactData && (
+      {/* {artifactData && (
         <div className="w-full h-full flex-1 pt-6 pb-4">
           <ArtifactPanel />
         </div>
-      )}
+      )} */}
     </>
   );
 };

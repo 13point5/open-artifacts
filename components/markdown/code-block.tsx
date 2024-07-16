@@ -88,9 +88,9 @@ const CodeBlock = ({ language, value }: Props) => {
 
   return (
     <div className="codeblock relative w-full font-sans">
-      <div className="flex items-center justify-between rounded-t-lg bg-zinc-700/40 px-4 py-1">
+      <div className="flex items-center justify-between rounded-t-lg bg-zinc-700 px-4 py-1">
         <span className="text-xs lowercase text-white">{language}</span>
-        <div className="flex items-center ">
+        <div className="flex items-center gap-2">
           <button
             aria-label="Copy code"
             className="flex items-center gap-1.5 rounded bg-none p-1 text-xs text-white"
@@ -120,8 +120,9 @@ const CodeBlock = ({ language, value }: Props) => {
         customStyle={{
           margin: 0,
           width: "100%",
-          background: "transparent",
           padding: "1.5rem 1rem",
+          borderBottomLeftRadius: "8px",
+          borderBottomRightRadius: "8px",
         }}
         codeTagProps={{
           style: {

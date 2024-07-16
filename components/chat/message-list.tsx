@@ -2,14 +2,6 @@ import { Models } from "@/app/types";
 import { ChatMessage } from "@/components/chat/message";
 import { Message } from "ai";
 
-const generateMessages = (count: number) => {
-  return Array.from({ length: count }).map((_, index) => ({
-    role: index % 2 === 0 ? "user" : "ai",
-    model: index % 2 === 0 ? null : Models.claude,
-    text: "Hello whats up",
-  }));
-};
-
 type Props = {
   messages: Message[];
 };

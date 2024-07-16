@@ -1,6 +1,5 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -10,12 +9,10 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { SignOutDialog } from "./sign-out-dialog";
-import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 import { UserIcon } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useSupabase } from "@/lib/supabase";
-import { getEmailInitials } from "@/lib/utils";
 
 type Props = {
   expanded?: boolean;
@@ -26,7 +23,6 @@ export const UserButton = ({ expanded = false }: Props) => {
 
   const { supabase, session } = useSupabase();
   const email = session?.user.email;
-  const userInitials = email ? getEmailInitials(email) : null;
 
   const [isSignoutDialogOpen, setIsSignoutDialogOpen] = useState(false);
 
