@@ -50,10 +50,10 @@ export function parseMessage(message: string): MessagePart[] {
       }
 
       const tag = message.slice(i + 1, tagEnd);
-      if (tag.startsWith("antthinking")) {
+      if (tag.startsWith("thinking")) {
         currentPart = { type: "thought", data: "" };
         i = tagEnd + 1;
-      } else if (tag.startsWith("antartifact")) {
+      } else if (tag.startsWith("artifact")) {
         const data: ArtifactMessagePartData = {
           generating: true,
           id: null,
@@ -77,7 +77,7 @@ export function parseMessage(message: string): MessagePart[] {
       }
     } else if (currentPart) {
       const closingTag =
-        currentPart.type === "thought" ? "</antthinking>" : "</antartifact>";
+        currentPart.type === "thought" ? "</thinking>" : "</artifact>";
       const closingIndex = message.indexOf(closingTag, i);
 
       if (closingIndex !== -1) {
