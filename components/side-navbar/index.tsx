@@ -14,7 +14,7 @@ import { useParams } from "next/navigation";
 import { useState } from "react";
 
 export const SideNavBar = () => {
-  const [open, setOpen] = useState(true);
+  const [open, setOpen] = useState(false);
 
   const params = useParams();
 

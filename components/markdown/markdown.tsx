@@ -2,14 +2,20 @@
 
 import React from "react";
 import remarkGfm from "remark-gfm";
+import { twMerge } from "tailwind-merge";
 
 import { CodeBlock } from "@/components/markdown/code-block";
 import { MemoizedReactMarkdown } from "@/components/markdown/memoized-react-markdownn";
 
-export default function Markdown({ text }: { text: string }) {
+type Props = { text: string; className?: string };
+
+export default function Markdown({ text, className = "" }: Props) {
   return (
     <MemoizedReactMarkdown
-      className="prose prose-slate dark:prose-invert prose-p:leading-relaxed prose-pre:p-0 max-w-none break-words"
+      className={twMerge(
+        "prose text-black dark:prose-invert prose-p:leading-relaxed prose-pre:p-0 max-w-none break-words",
+        className
+      )}
       remarkPlugins={[remarkGfm]}
       components={{
         p({ children }) {

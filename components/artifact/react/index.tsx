@@ -27,7 +27,6 @@ export const ReactArtifact = ({ code, mode }: Props) => {
             maxHeight: "100%",
             width: "100%",
             overflow: "auto",
-            paddingBottom: "2rem",
           }}
         />
       )}

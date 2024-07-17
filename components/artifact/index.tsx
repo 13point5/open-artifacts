@@ -1,6 +1,7 @@
 "use client";
 
 import { ReactArtifact } from "@/components/artifact/react";
+import Markdown from "@/components/markdown/markdown";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -11,8 +12,9 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { useCopyToClipboard } from "@/lib/hooks/use-copy-to-clipboard";
 import { ArtifactMessagePartData } from "@/lib/utils";
-import { ClipboardIcon, XIcon } from "lucide-react";
+import { CheckIcon, ClipboardIcon, XIcon } from "lucide-react";
 import { useState } from "react";
 
 type Props = {
@@ -21,8 +23,17 @@ type Props = {
 
 export type ArtifactMode = "code" | "preview";
 
-export const ArtifactPanel = ({ title, content, onClose }: Props) => {
+export const ArtifactPanel = ({ type, title, content, onClose }: Props) => {
   const [mode, setMode] = useState<ArtifactMode>("code");
+
+  const { isCopied, copyToClipboard } = useCopyToClipboard({
+    timeout: 2000,
+  });
+
+  const onCopy = () => {
+    if (isCopied) return;
+    copyToClipboard(content);
+  };
 
   return (
     <Card className="w-full border-none rounded-none flex flex-col h-full max-h-full">
@@ -30,31 +41,50 @@ export const ArtifactPanel = ({ title, content, onClose }: Props) => {
         <span className="font-semibold">{title || "Generating..."}</span>
 
         <div className="flex gap-2 items-center">
-          <Tabs
-            value={mode}
-            onValueChange={(value) => setMode(value as ArtifactMode)}
-          >
-            <TabsList className="bg-slate-200">
-              <TabsTrigger value="preview">Preview</TabsTrigger>
-              <TabsTrigger value="code">Code</TabsTrigger>
-            </TabsList>
-          </Tabs>
-
+          {type?.includes("react") && (
+            <Tabs
+              value={mode}
+              onValueChange={(value) => setMode(value as ArtifactMode)}
+            >
+              <TabsList className="bg-slate-200">
+                <TabsTrigger value="preview">Preview</TabsTrigger>
+                <TabsTrigger value="code">Code</TabsTrigger>
+              </TabsList>
+            </Tabs>
+          )}
           <Button onClick={onClose} size="icon" variant="ghost">
             <XIcon className="w-4 h-4" />
           </Button>
         </div>
       </CardHeader>
 
-      <CardContent className="border-l border-r p-0 w-full flex-1 max-h-full">
-        <ReactArtifact code={content} mode={mode} />
+      <CardContent className="border-l border-r p-0 w-full flex-1 max-h-full overflow-hidden">
+        {type?.includes("markdown") && (
+          <Markdown
+            text={content}
+            className="h-full max-h-full overflow-auto py-4 px-4"
+          />
+        )}
+
+        {type?.includes("react") && (
+          <ReactArtifact code={content} mode={mode} />
+        )}
       </CardContent>
 
       <CardFooter className="bg-slate-50 border rounded-lg rounded-t-none py-2 px-4 flex items-center flex-row-reverse gap-4">
         {/* <Button className="h-8">Publish</Button> */}
 
-        <Button size="icon" variant="outline" className="w-8 h-8">
-          <ClipboardIcon className="w-4 h-4" />
+        <Button
+          onClick={onCopy}
+          size="icon"
+          variant="outline"
+          className="w-8 h-8"
+        >
+          {isCopied ? (
+            <CheckIcon className="w-4 h-4" />
+          ) : (
+            <ClipboardIcon className="w-4 h-4" />
+          )}
         </Button>
       </CardFooter>
     </Card>
