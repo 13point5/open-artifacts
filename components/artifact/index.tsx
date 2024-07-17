@@ -1,6 +1,7 @@
 "use client";
 
 import { ReactArtifact } from "@/components/artifact/react";
+import { CodeBlock } from "@/components/markdown/code-block";
 import Markdown from "@/components/markdown/markdown";
 import { Button } from "@/components/ui/button";
 import {
@@ -23,7 +24,15 @@ type Props = {
 
 export type ArtifactMode = "code" | "preview";
 
-export const ArtifactPanel = ({ type, title, content, onClose }: Props) => {
+export const ArtifactPanel = ({
+  type,
+  title,
+  language,
+  content,
+  onClose,
+}: Props) => {
+  console.log("type, title, content, language", type, title, language, content);
+
   const [mode, setMode] = useState<ArtifactMode>("code");
 
   const { isCopied, copyToClipboard } = useCopyToClipboard({
@@ -63,6 +72,15 @@ export const ArtifactPanel = ({ type, title, content, onClose }: Props) => {
           <Markdown
             text={content}
             className="h-full max-h-full overflow-auto py-4 px-4"
+          />
+        )}
+
+        {type?.includes("code") && language && (
+          <CodeBlock
+            language={language}
+            value={content}
+            showHeader={false}
+            className="h-full max-h-full overflow-auto"
           />
         )}
 

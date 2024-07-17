@@ -11,6 +11,7 @@ export type ArtifactMessagePartData = {
   type: string | null;
   title: string | null;
   content: string;
+  language: string | null;
 };
 
 export type MessagePart =
@@ -60,6 +61,7 @@ export function parseMessage(message: string): MessagePart[] {
           type: null,
           title: null,
           content: "",
+          language: null,
         };
         const attributeRegex = /(\w+)="([^"]*)"/g;
         let match;
@@ -68,6 +70,7 @@ export function parseMessage(message: string): MessagePart[] {
           if (key === "identifier") data.id = value;
           else if (key === "type") data.type = value;
           else if (key === "title") data.title = value;
+          else if (key === "language") data.language = value;
         }
         currentPart = { type: "artifact", data };
         i = tagEnd + 1;

@@ -5,10 +5,13 @@ import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
 import { coldarkDark } from "react-syntax-highlighter/dist/cjs/styles/prism";
 
 import { useCopyToClipboard } from "@/lib/hooks/use-copy-to-clipboard";
+import { twMerge } from "tailwind-merge";
 
 interface Props {
   language: string;
   value: string;
+  showHeader?: boolean;
+  className?: string;
 }
 
 interface languageMap {
@@ -50,7 +53,12 @@ export const generateRandomString = (length: number, lowercase = false) => {
   return lowercase ? result.toLowerCase() : result;
 };
 
-const CodeBlock = ({ language, value }: Props) => {
+const CodeBlock = ({
+  language,
+  value,
+  showHeader = true,
+  className = "",
+}: Props) => {
   // * Copy to clipboard is used in multiple places, so using a custom hook
   const { isCopied, copyToClipboard } = useCopyToClipboard({
     timeout: 2000,
@@ -87,31 +95,34 @@ const CodeBlock = ({ language, value }: Props) => {
   };
 
   return (
-    <div className="codeblock relative w-full font-sans">
-      <div className="flex items-center justify-between rounded-t-lg bg-zinc-700 px-4 py-1">
-        <span className="text-xs lowercase text-white">{language}</span>
-        <div className="flex items-center gap-2">
-          <button
-            aria-label="Copy code"
-            className="flex items-center gap-1.5 rounded bg-none p-1 text-xs text-white"
-            onClick={onCopy}
-          >
-            {isCopied ? (
-              <Check className="size-4" aria-hidden="true" />
-            ) : (
-              <Copy className="size-4" aria-hidden="true" />
-            )}
-            {isCopied ? "Copied!" : "Copy code"}
-          </button>
-          <button
-            aria-label="Download code"
-            className="flex items-center rounded bg-none p-1 text-xs text-white"
-            onClick={downloadAsFile}
-          >
-            <Download className="size-4" aria-hidden="true" />
-          </button>
+    <div className={twMerge("codeblock relative w-full font-sans", className)}>
+      {showHeader && (
+        <div className="flex items-center justify-between rounded-t-lg bg-zinc-700 px-4 py-1">
+          <span className="text-xs lowercase text-white">{language}</span>
+          <div className="flex items-center gap-2">
+            <button
+              aria-label="Copy code"
+              className="flex items-center gap-1.5 rounded bg-none p-1 text-xs text-white"
+              onClick={onCopy}
+            >
+              {isCopied ? (
+                <Check className="size-4" aria-hidden="true" />
+              ) : (
+                <Copy className="size-4" aria-hidden="true" />
+              )}
+              {isCopied ? "Copied!" : "Copy code"}
+            </button>
+            <button
+              aria-label="Download code"
+              className="flex items-center rounded bg-none p-1 text-xs text-white"
+              onClick={downloadAsFile}
+            >
+              <Download className="size-4" aria-hidden="true" />
+            </button>
+          </div>
         </div>
-      </div>
+      )}
+
       <SyntaxHighlighter
         language={language}
         style={coldarkDark}

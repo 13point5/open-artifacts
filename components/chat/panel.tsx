@@ -154,6 +154,7 @@ export const ChatPanel = ({ id }: Props) => {
             type={currentArtifact.type}
             generating={currentArtifact.generating}
             content={currentArtifact.content}
+            language={currentArtifact.language}
             onClose={() => setCurrentArtifact(null)}
           />
         </div>
