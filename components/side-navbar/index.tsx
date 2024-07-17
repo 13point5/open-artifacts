@@ -8,12 +8,13 @@ import { getChats } from "@/lib/db";
 import { useSupabase } from "@/lib/supabase";
 import { useQuery } from "@tanstack/react-query";
 import { Loader2Icon, SidebarIcon, SquarePenIcon } from "lucide-react";
+import Image from "next/image";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import { useState } from "react";
 
 export const SideNavBar = () => {
-  const [open, setOpen] = useState(false);
+  const [open, setOpen] = useState(true);
 
   const params = useParams();
 
@@ -71,6 +72,19 @@ export const SideNavBar = () => {
         </div>
 
         <div className="flex flex-col gap-4 mt-2">
+          <a
+            href="https://github.com/13point5/open-artifacts"
+            target="_blank"
+            className="text-black flex items-center gap-4 px-1"
+          >
+            <Image
+              src="/github-mark.svg"
+              height="24"
+              width="24"
+              alt="github logo"
+            />
+            <span className="text-sm font-medium">GitHub Repo</span>
+          </a>
           <UserSettings showLabel />
           <UserButton expanded />
         </div>
@@ -99,6 +113,18 @@ export const SideNavBar = () => {
       </div>
 
       <div className="flex flex-col items-center gap-4">
+        <a
+          href="https://github.com/13point5/open-artifacts"
+          target="_blank"
+          className="text-black"
+        >
+          <Image
+            src="/github-mark.svg"
+            height="24"
+            width="24"
+            alt="github logo"
+          />
+        </a>
         <UserSettings />
         <UserButton />
       </div>

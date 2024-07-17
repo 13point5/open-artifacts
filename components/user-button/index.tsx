@@ -21,8 +21,7 @@ type Props = {
 export const UserButton = ({ expanded = false }: Props) => {
   const router = useRouter();
 
-  const { supabase, session } = useSupabase();
-  const email = session?.user.email;
+  const { supabase } = useSupabase();
 
   const [isSignoutDialogOpen, setIsSignoutDialogOpen] = useState(false);
 
@@ -52,10 +51,10 @@ export const UserButton = ({ expanded = false }: Props) => {
     <>
       <DropdownMenu>
         <DropdownMenuTrigger className="w-full flex items-center justify-start gap-4 px-1 h-6">
-          <UserIcon className="w-6 h-6" />
+          <UserIcon size={24} />
 
           {expanded && (
-            <span className="font-medium text-sm truncate">{email}</span>
+            <span className="font-medium text-sm truncate">My Account</span>
           )}
         </DropdownMenuTrigger>
 
