@@ -27,6 +27,7 @@ import { useState } from "react";
 import { Loader2Icon } from "lucide-react";
 import toast from "react-hot-toast";
 import { SignInFooter, SignUpFooter } from "@/components/auth-form-footers";
+import { SocialFooter } from "@/components/social-footer";
 
 const formSchema = z.object({
   email: z.string(),
@@ -122,6 +123,8 @@ const ForgotPasswordForm = () => {
           </form>
         </Form>
       </Card>
+
+      <SocialFooter />
     </main>
   );
 };

@@ -29,6 +29,7 @@ import {
   ForgotPasswordFooter,
   SignUpFooter,
 } from "@/components/auth-form-footers";
+import { SocialFooter } from "@/components/social-footer";
 
 const formSchema = z.object({
   email: z.string(),
@@ -136,6 +137,8 @@ const SignInForm = () => {
           </form>
         </Form>
       </Card>
+
+      <SocialFooter />
     </main>
   );
 };

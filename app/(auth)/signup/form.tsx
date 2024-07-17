@@ -26,6 +26,7 @@ import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 import { SignInFooter } from "@/components/auth-form-footers";
 import toast from "react-hot-toast";
 import { Loader2Icon } from "lucide-react";
+import { SocialFooter } from "@/components/social-footer";
 
 enum FormStatus {
   Idle,
@@ -153,6 +154,8 @@ const SignUpForm = () => {
           </form>
         </Form>
       </Card>
+
+      <SocialFooter />
     </main>
   );
 };

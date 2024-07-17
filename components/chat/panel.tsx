@@ -147,7 +147,7 @@ export const ChatPanel = ({ id }: Props) => {
       </div>
 
       {currentArtifact && (
-        <div className="w-full max-w-3xl h-full flex-1 pt-6 pb-4">
+        <div className="w-full max-w-3xl h-full max-h-full flex-1 pt-6 pb-4">
           <ArtifactPanel
             title={currentArtifact.title}
             id={currentArtifact.id}
