@@ -12,6 +12,11 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Models } from "@/app/types";
+import {
+  getSettings,
+  SettingsSchema,
+  updateSettings,
+} from "@/lib/userSettings";
 
 type Props = {
   input: string;
@@ -25,12 +30,22 @@ export const ChatInput = ({ input, setInput, onSubmit, isLoading }: Props) => {
   const { onKeyDown } = useEnterSubmit({
     onSubmit,
   });
+  const [model, setModel] = useState<Models>(getSettings().model);
 
   useEffect(() => {
     if (inputRef.current) {
       inputRef.current.focus();
     }
   }, []);
+
+  const handleModelChange = (newModel: Models) => {
+    setModel(newModel);
+
+    const currentSettings = getSettings();
+    const newSettings: SettingsSchema = { ...currentSettings, model: newModel };
+
+    updateSettings(newSettings);
+  };
 
   return (
     <div className="sticky bottom-0 mx-auto w-full pt-6 ">
@@ -66,15 +81,17 @@ export const ChatInput = ({ input, setInput, onSubmit, isLoading }: Props) => {
           </Button>
         </div>
 
-        {/* <Select defaultValue={Models.claude}>
-          <SelectTrigger className="w-fit bg-transparent flex items-center gap-2">
-            <SelectValue placeholder="Model" />
+        <Select value={model || undefined} onValueChange={handleModelChange}>
+          <SelectTrigger className="w-fit bg-[#F4F4F4] flex items-center gap-2 border-none">
+            <SelectValue placeholder="Select Model" />
           </SelectTrigger>
-          <SelectContent className="w-fit bg-transparent">
-            <SelectItem value={Models.claude}>Claude</SelectItem>
+          <SelectContent className="w-fit ">
+            <SelectItem value={Models.claude}>Claude Sonnet</SelectItem>
             <SelectItem value={Models.gpt4o}>GPT 4-o</SelectItem>
+            <SelectItem value={Models.gpt4turbo}>GPT-4 Turbo</SelectItem>
+            <SelectItem value={Models.gpt35turbo}>GPT-3.5 Turbo</SelectItem>
           </SelectContent>
-        </Select> */}
+        </Select>
       </div>
     </div>
   );

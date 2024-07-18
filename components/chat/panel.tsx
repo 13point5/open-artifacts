@@ -10,14 +10,9 @@ import { addMessage, createChat, getChatMessages } from "@/lib/db";
 import { Loader2Icon } from "lucide-react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useSupabase } from "@/lib/supabase";
-import { Chat } from "@/app/types";
+import { Chat, Models } from "@/app/types";
 import { ArtifactMessagePartData } from "@/lib/utils";
-
-type ArtifactData = {
-  title: string;
-  code: string;
-  type: string;
-};
+import toast from "react-hot-toast";
 
 type Props = {
   id: string | null;
@@ -87,6 +82,7 @@ export const ChatPanel = ({ id }: Props) => {
     initialMessages,
     body: {
       apiKey: settings.claudeApiKey,
+      model: settings.model,
     },
     onFinish: async (message) => {
       if (chatId) {
@@ -116,15 +112,33 @@ export const ChatPanel = ({ id }: Props) => {
   }, [chatId, queuedMessages]);
 
   const handleSend = async () => {
-    if (input.trim()) {
-      const message = { role: "user", content: input };
-      append({ role: "user", content: input });
-      setInput("");
-      if (chatId) {
-        await addMessage(supabase, chatId, message);
-      } else {
-        setQueuedMessages((prev) => [...prev, message]);
-      }
+    const query = input.trim();
+    if (!query) return;
+
+    const settings = getSettings();
+
+    if (settings.model === Models.claude && !settings.claudeApiKey) {
+      toast.error("Please enter your Claude API Key");
+      return;
+    }
+
+    if (settings.model.startsWith("gpt") && !settings.openaiApiKey) {
+      toast.error("Please enter your OpenAI API Key");
+      return;
+    }
+
+    append({ role: "user", content: query });
+    setInput("");
+
+    const message = {
+      role: "user",
+      content: query,
+    };
+
+    if (chatId) {
+      await addMessage(supabase, chatId, message);
+    } else {
+      setQueuedMessages((prev) => [...prev, message]);
     }
   };
 

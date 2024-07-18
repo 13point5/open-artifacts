@@ -71,7 +71,7 @@ export const createChat = async (
 export const addMessage = async (
   supabase: SupabaseContextType["supabase"],
   chatId: string | null,
-  message: { role: string; content: string }
+  message: { role: string; content: string; metadata?: Record<string, any> }
 ) => {
   if (!chatId) return message;
 

@@ -48,7 +48,7 @@ export const ChatMessage = ({
       }`}
     >
       <span className="font-semibold text-sm">
-        {getDisplayNameFromRole(role, model)}
+        {role === "user" ? "Me" : "Artifacto"}
       </span>
 
       {role === "user" && <Markdown text={text} />}
