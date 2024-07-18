@@ -5,7 +5,7 @@ import { SideNavBar } from "@/components/side-navbar";
 import { useSupabase } from "@/lib/supabase";
 import { redirect } from "next/navigation";
 
-const Chat = () => {
+const NewChatPage = () => {
   const { session } = useSupabase();
 
   if (!session) redirect("/signin");
@@ -19,4 +19,4 @@ const Chat = () => {
   );
 };
 
-export default Chat;
+export default NewChatPage;

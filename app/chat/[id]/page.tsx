@@ -11,7 +11,7 @@ type Props = {
   };
 };
 
-const NewChatPage = ({ params: { id } }: Props) => {
+const ChatPage = ({ params: { id } }: Props) => {
   const { session } = useSupabase();
 
   if (!session) redirect("/signin");
@@ -25,4 +25,4 @@ const NewChatPage = ({ params: { id } }: Props) => {
   );
 };
 
-export default NewChatPage;
+export default ChatPage;

@@ -13,6 +13,7 @@ import { useSupabase } from "@/lib/supabase";
 import { Chat, Models } from "@/app/types";
 import { ArtifactMessagePartData } from "@/lib/utils";
 import toast from "react-hot-toast";
+import { useRouter } from "next/navigation";
 
 type Props = {
   id: string | null;
@@ -22,23 +23,18 @@ export const ChatPanel = ({ id }: Props) => {
   const settings = getSettings();
   const { supabase, session } = useSupabase();
   const queryClient = useQueryClient();
+  const router = useRouter();
 
   const [chatId, setChatId] = useState(id);
-
   const [initialMessages, setInitialMessages] = useState<Message[]>([]);
   const [fetchingMessages, setFetchingMessages] = useState(false);
-  const [queuedMessages, setQueuedMessages] = useState<
-    { role: string; content: string }[]
-  >([]);
   const [currentArtifact, setCurrentArtifact] =
     useState<ArtifactMessagePartData | null>(null);
 
   const fetchMessages = async () => {
     if (chatId) {
       setFetchingMessages(true);
-
       const messages = await getChatMessages(supabase, chatId);
-
       setInitialMessages(
         messages.map((message) => ({
           id: String(message.id),
@@ -46,7 +42,6 @@ export const ChatPanel = ({ id }: Props) => {
           content: message.text,
         }))
       );
-
       setFetchingMessages(false);
     } else {
       setInitialMessages([]);
@@ -58,17 +53,23 @@ export const ChatPanel = ({ id }: Props) => {
   }, []);
 
   const createChatMutation = useMutation({
-    mutationFn: async (title: string) =>
-      await createChat(supabase, title, session?.user.id),
-    onSuccess: (newChat) => {
-      // Update the cache with the new chat
+    mutationFn: async ({
+      title,
+    }: {
+      title: string;
+      firstMessage: Message;
+      secondMessage: Message;
+    }) => await createChat(supabase, title, session?.user.id),
+    onSuccess: async (newChat, { firstMessage, secondMessage }) => {
       queryClient.setQueryData<Chat[]>(["chats"], (oldChats) => {
         return [...(oldChats || []), newChat];
       });
-
-      window.history.replaceState({}, "", `/chat/${newChat.id}`);
-
       setChatId(newChat.id);
+
+      await addMessage(supabase, newChat.id, firstMessage);
+      await addMessage(supabase, newChat.id, secondMessage);
+
+      router.push(`/chat/${newChat.id}`);
     },
   });
 
@@ -87,29 +88,19 @@ export const ChatPanel = ({ id }: Props) => {
     onFinish: async (message) => {
       if (chatId) {
         await addMessage(supabase, chatId, message);
-      } else {
-        setQueuedMessages((prev) => [...prev, message]);
       }
     },
   });
 
   useEffect(() => {
-    if (!chatId && messages.length === 1) {
-      createChatMutation.mutate(messages[0].content.slice(0, 100));
+    if (!chatId && messages.length === 2 && !generatingResponse) {
+      createChatMutation.mutate({
+        title: messages[0].content.slice(0, 100),
+        firstMessage: messages[0],
+        secondMessage: messages[1],
+      });
     }
-  }, [messages, chatId]);
-
-  useEffect(() => {
-    const sendQueuedMessages = async () => {
-      if (chatId && queuedMessages.length > 0) {
-        for (const message of queuedMessages) {
-          await addMessage(supabase, chatId, message);
-        }
-        setQueuedMessages([]);
-      }
-    };
-    sendQueuedMessages();
-  }, [chatId, queuedMessages]);
+  }, [chatId, messages, generatingResponse]);
 
   const handleSend = async () => {
     const query = input.trim();
@@ -130,15 +121,8 @@ export const ChatPanel = ({ id }: Props) => {
     append({ role: "user", content: query });
     setInput("");
 
-    const message = {
-      role: "user",
-      content: query,
-    };
-
     if (chatId) {
-      await addMessage(supabase, chatId, message);
-    } else {
-      setQueuedMessages((prev) => [...prev, message]);
+      await addMessage(supabase, chatId, { role: "user", content: query });
     }
   };
 
