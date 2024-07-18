@@ -1,8 +1,12 @@
 # Open Artifacts
 
+![Supabase](https://img.shields.io/badge/Supabase-3ECF8E?style=for-the-badge&logo=supabase&logoColor=white) ![Next JS](https://img.shields.io/badge/Next-black?style=for-the-badge&logo=next.js&logoColor=white) ![Shadcn](https://img.shields.io/badge/shadcn%2Fui-000000?style=for-the-badge&logo=shadcnui&logoColor=white)
+
 ![Open Artifacts Demo](demo.png)
 
 Open Artifacts is a free, open-source project that clones the functionality of [Claude.ai](https://claude.ai) while supporting the generation of Artifacts using the user's Claude API key.
+
+The Artifact viewer is implemented using [Open Artifacts Renderer](https://github.com/13point5/open-artifacts-renderer).
 
 ## Features
 
@@ -20,33 +24,70 @@ Open Artifacts is a free, open-source project that clones the functionality of [
 
 ## Getting Started
 
-### Installation
-
 1. Clone the repository:
 
    ```
    git clone https://github.com/13point5/open-artifacts.git
    ```
 
-2. Navigate to the project directory:
+1. Navigate to the project directory:
 
    ```
    cd open-artifacts
    ```
 
-3. Install dependencies:
+### Supabase Setup
+
+1. Install the [Supabase CLI](https://supabase.com/docs/guides/cli/getting-started#installing-the-supabase-cli)
+
+1. Create a Supabase project
+
+1. Initialize Supabase locally
+
+   ```
+   supabase init
+   ```
+
+1. Link your local project to your remote Supabase project
+
+   ```
+   supabase link --project-ref <your-project-ref>
+   ```
+
+1. Apply Migrations
+
+   ```
+   supabase db push
+   ```
+
+1. Copy env variables from your Supabase project
+
+   ```
+   NEXT_PUBLIC_SUPABASE_URL=
+   NEXT_PUBLIC_SUPABASE_ANON_KEY=
+   ```
+
+### App Setup
+
+1. Install dependencies:
 
    ```
    npm install
    ```
 
-4. Run the development server:
+1. Run the development server:
 
    ```
    npm run dev
    ```
 
-5. Open [http://localhost:3000](http://localhost:3000) in your browser to see the application.
+1. Setup [Open Artifacts Renderer](https://github.com/13point5/open-artifacts-renderer) and set the `NEXT_PUBLIC_ARTIFACT_RENDERER_URL` env variable to the URL of the renderer.
+
+   ```
+   NEXT_PUBLIC_ARTIFACT_RENDERER_URL=
+   ```
+
+1. Open [http://localhost:3000](http://localhost:3000) in your browser to see the application.
 
 ## License
 

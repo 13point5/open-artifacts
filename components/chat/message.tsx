@@ -1,6 +1,7 @@
 "use client";
 
-import { ChatMessageRoles, Models } from "@/app/types";
+import { Attachment, ChatMessageRoles, Models } from "@/app/types";
+import { AttachmentPreviewButton } from "@/components/chat/attachment-preview-button";
 import Markdown from "@/components/markdown/markdown";
 import { Button } from "@/components/ui/button";
 import {
@@ -33,23 +34,31 @@ type Props = {
   model: Models | null;
   text: string;
   setCurrentArtifact: (data: ArtifactMessagePartData) => void;
+  attachments: Attachment[];
 };
 
 export const ChatMessage = ({
   role,
   model,
   text,
+  attachments,
   setCurrentArtifact,
 }: Props) => {
   return (
     <div
-      className={`flex flex-col gap-1 px-2 py-1 rounded-md ${
+      className={`flex flex-col gap-2 px-4 py-2 rounded-md ${
         role === "user" ? "bg-[#F4F4F4]" : "bg-white"
       }`}
     >
       <span className="font-semibold text-sm">
         {role === "user" ? "Me" : "Artifacto"}
       </span>
+
+      <div className="flex items-center gap-2 flex-wrap">
+        {attachments.map((attachment, index) => (
+          <AttachmentPreviewButton key={index} value={attachment} />
+        ))}
+      </div>
 
       {role === "user" && <Markdown text={text} />}
 

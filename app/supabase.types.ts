@@ -32,28 +32,34 @@ export type Database = {
       }
       messages: {
         Row: {
+          attachments: Json | null
           chat_id: string
           created_at: string
           id: number
           metadata: Json | null
           role: string
           text: string
+          user_id: string
         }
         Insert: {
+          attachments?: Json | null
           chat_id: string
           created_at?: string
           id?: number
           metadata?: Json | null
           role: string
           text: string
+          user_id?: string
         }
         Update: {
+          attachments?: Json | null
           chat_id?: string
           created_at?: string
           id?: number
           metadata?: Json | null
           role?: string
           text?: string
+          user_id?: string
         }
         Relationships: [
           {
@@ -61,6 +67,35 @@ export type Database = {
             columns: ["chat_id"]
             isOneToOne: false
             referencedRelation: "chats"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      profiles: {
+        Row: {
+          avatar_url: string | null
+          full_name: string | null
+          id: string
+          updated_at: string | null
+        }
+        Insert: {
+          avatar_url?: string | null
+          full_name?: string | null
+          id: string
+          updated_at?: string | null
+        }
+        Update: {
+          avatar_url?: string | null
+          full_name?: string | null
+          id?: string
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "profiles_id_fkey"
+            columns: ["id"]
+            isOneToOne: true
+            referencedRelation: "users"
             referencedColumns: ["id"]
           },
         ]

@@ -1,7 +1,13 @@
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { useEnterSubmit } from "@/lib/hooks/use-enter-submit";
-import { ArrowUpIcon, Loader2Icon } from "lucide-react";
+import {
+  ArrowUpIcon,
+  Loader2Icon,
+  MicIcon,
+  PauseIcon,
+  XIcon,
+} from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import Textarea from "react-textarea-autosize";
 import {
@@ -11,21 +17,37 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Models } from "@/app/types";
+import { Attachment, Models } from "@/app/types";
 import {
   getSettings,
   SettingsSchema,
   updateSettings,
 } from "@/lib/userSettings";
+import { AttachmentPreviewButton } from "@/components/chat/attachment-preview-button";
 
-type Props = {
+export type Props = {
   input: string;
   setInput: (value: string) => void;
   onSubmit: () => void;
   isLoading: boolean;
+  recording: boolean;
+  onStartRecord: () => void;
+  onStopRecord: () => void;
+  attachments: Attachment[];
+  onRemoveAttachment: (attachment: Attachment) => void;
 };
 
-export const ChatInput = ({ input, setInput, onSubmit, isLoading }: Props) => {
+export const ChatInput = ({
+  input,
+  setInput,
+  onSubmit,
+  isLoading,
+  recording,
+  onStartRecord,
+  onStopRecord,
+  attachments,
+  onRemoveAttachment,
+}: Props) => {
   const inputRef = useRef<HTMLTextAreaElement>(null);
   const { onKeyDown } = useEnterSubmit({
     onSubmit,
@@ -50,6 +72,18 @@ export const ChatInput = ({ input, setInput, onSubmit, isLoading }: Props) => {
   return (
     <div className="sticky bottom-0 mx-auto w-full pt-6 ">
       <div className="flex flex-col gap-1 bg-[#F4F4F4] p-2.5 pl-4 rounded-md border border-b-0 rounded-b-none shadow-md">
+        {attachments && (
+          <div className="flex items-center gap-2 mb-2">
+            {attachments.map((attachment, index) => (
+              <AttachmentPreviewButton
+                key={index}
+                value={attachment}
+                onRemove={onRemoveAttachment}
+              />
+            ))}
+          </div>
+        )}
+
         <div className="flex gap-2 items-start">
           <Textarea
             ref={inputRef}
@@ -66,6 +100,20 @@ export const ChatInput = ({ input, setInput, onSubmit, isLoading }: Props) => {
             value={input}
             onChange={(e) => setInput(e.target.value)}
           />
+
+          <Button
+            onClick={() => {
+              recording ? onStopRecord() : onStartRecord();
+            }}
+            size="icon"
+            className="w-8 h-8"
+          >
+            {recording ? (
+              <PauseIcon className="w-4 h-4" />
+            ) : (
+              <MicIcon className="w-4 h-4" />
+            )}
+          </Button>
 
           <Button
             onClick={onSubmit}

@@ -19,6 +19,7 @@ export const ChatMessageList = ({ messages, setCurrentArtifact }: Props) => {
           role={message.role}
           model={Models.claude}
           text={message.content}
+          attachments={message.experimental_attachments || []}
           setCurrentArtifact={setCurrentArtifact}
         />
       ))}

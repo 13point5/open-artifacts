@@ -1,3 +1,4 @@
+import { Attachment } from "@/app/types";
 import { SupabaseContextType } from "@/lib/supabase/types";
 
 export const getChats = async (
@@ -9,7 +10,8 @@ export const getChats = async (
   const { data, error } = await supabase
     .from("chats")
     .select("*")
-    .eq("user_id", userId);
+    .eq("user_id", userId)
+    .order("created_at", { ascending: false });
 
   if (error) {
     console.error(error);
@@ -71,7 +73,8 @@ export const createChat = async (
 export const addMessage = async (
   supabase: SupabaseContextType["supabase"],
   chatId: string | null,
-  message: { role: string; content: string; metadata?: Record<string, any> }
+  message: { role: string; content: string; metadata?: Record<string, any> },
+  attachments: Attachment[] = []
 ) => {
   if (!chatId) return message;
 
@@ -79,6 +82,7 @@ export const addMessage = async (
     chat_id: chatId,
     role: message.role,
     text: message.content,
+    attachments,
   });
 
   if (error) {

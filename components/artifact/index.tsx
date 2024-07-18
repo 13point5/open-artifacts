@@ -3,6 +3,7 @@
 import { ReactArtifact } from "@/components/artifact/react";
 import { CodeBlock } from "@/components/markdown/code-block";
 import Markdown from "@/components/markdown/markdown";
+import SelectionTool from "@/components/selection-tool";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -17,9 +18,12 @@ import { useCopyToClipboard } from "@/lib/hooks/use-copy-to-clipboard";
 import { ArtifactMessagePartData } from "@/lib/utils";
 import { CheckIcon, ClipboardIcon, XIcon } from "lucide-react";
 import { useState } from "react";
+import { Props as ReactArtifactProps } from "@/components/artifact/react";
 
 type Props = {
   onClose: () => void;
+  recording: boolean;
+  onCapture: ReactArtifactProps["onCapture"];
 } & ArtifactMessagePartData;
 
 export type ArtifactMode = "code" | "preview";
@@ -30,9 +34,10 @@ export const ArtifactPanel = ({
   language,
   content,
   onClose,
+  recording,
+  onCapture,
+  generating,
 }: Props) => {
-  console.log("type, title, content, language", type, title, language, content);
-
   const [mode, setMode] = useState<ArtifactMode>("code");
 
   const { isCopied, copyToClipboard } = useCopyToClipboard({
@@ -50,7 +55,7 @@ export const ArtifactPanel = ({
         <span className="font-semibold">{title || "Generating..."}</span>
 
         <div className="flex gap-2 items-center">
-          {type?.includes("react") && (
+          {type?.includes("react") && !generating && (
             <Tabs
               value={mode}
               onValueChange={(value) => setMode(value as ArtifactMode)}
@@ -61,13 +66,17 @@ export const ArtifactPanel = ({
               </TabsList>
             </Tabs>
           )}
+
           <Button onClick={onClose} size="icon" variant="ghost">
             <XIcon className="w-4 h-4" />
           </Button>
         </div>
       </CardHeader>
 
-      <CardContent className="border-l border-r p-0 w-full flex-1 max-h-full overflow-hidden">
+      <CardContent
+        id="artifact-content"
+        className="border-l border-r p-0 w-full flex-1 max-h-full overflow-hidden relative"
+      >
         {type?.includes("markdown") && (
           <Markdown
             text={content}
@@ -85,13 +94,16 @@ export const ArtifactPanel = ({
         )}
 
         {type?.includes("react") && (
-          <ReactArtifact code={content} mode={mode} />
+          <ReactArtifact
+            code={content}
+            mode={mode}
+            recording={recording}
+            onCapture={onCapture}
+          />
         )}
       </CardContent>
 
       <CardFooter className="bg-slate-50 border rounded-lg rounded-t-none py-2 px-4 flex items-center flex-row-reverse gap-4">
-        {/* <Button className="h-8">Publish</Button> */}
-
         <Button
           onClick={onCopy}
           size="icon"
