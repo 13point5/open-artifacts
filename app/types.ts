@@ -11,3 +11,9 @@ export enum Models {
 }
 
 export type Chat = Database["public"]["Tables"]["chats"]["Row"];
+
+export type Attachment = {
+  contentType?: string;
+  url: string;
+  name?: string;
+};

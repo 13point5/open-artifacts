@@ -1,6 +1,6 @@
 import { ArtifactoSystemPrompt } from "@/app/api/chat/systemPrompt";
 import { createAnthropic } from "@ai-sdk/anthropic";
-import { streamText } from "ai";
+import { streamText, convertToCoreMessages, Message, ImagePart } from "ai";
 import { createOpenAI } from "@ai-sdk/openai";
 import { Models } from "@/app/types";
 
@@ -36,9 +36,29 @@ export async function POST(req: Request) {
 
   if (!llm) throw new Error(`Unsupported model: ${model}`);
 
+  const initialMessages = messages.slice(0, -1);
+  const currentMessage: Message = messages[messages.length - 1];
+  const attachments = currentMessage.experimental_attachments || [];
+  const imageParts: ImagePart[] = attachments.map((file) => ({
+    type: "image",
+    image: new URL(file.url),
+  }));
+
   const result = await streamText({
     model: llm,
-    messages,
+    messages: [
+      ...convertToCoreMessages(initialMessages),
+      {
+        role: "user",
+        content: [
+          {
+            type: "text",
+            text: currentMessage.content,
+          },
+          ...imageParts,
+        ],
+      },
+    ],
     system: ArtifactoSystemPrompt,
     ...options,
   });

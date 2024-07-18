@@ -1,7 +1,7 @@
 "use client";
 
 import { ArtifactPanel } from "@/components/artifact";
-import { ChatInput } from "@/components/chat/input";
+import { ChatInput, Props as ChatInputProps } from "@/components/chat/input";
 import { ChatMessageList } from "@/components/chat/message-list";
 import { useEffect, useState } from "react";
 import { Message, useChat } from "ai/react";
@@ -10,10 +10,12 @@ import { addMessage, createChat, getChatMessages } from "@/lib/db";
 import { Loader2Icon } from "lucide-react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useSupabase } from "@/lib/supabase";
-import { Chat, Models } from "@/app/types";
+import { Chat, Models, Attachment } from "@/app/types";
 import { ArtifactMessagePartData } from "@/lib/utils";
 import toast from "react-hot-toast";
 import { useRouter } from "next/navigation";
+import { useWhisper } from "@chengsokdara/use-whisper";
+import { Props as ReactArtifactProps } from "@/components/artifact/react";
 
 type Props = {
   id: string | null;
@@ -40,6 +42,7 @@ export const ChatPanel = ({ id }: Props) => {
           id: String(message.id),
           role: message.role as Message["role"],
           content: message.text,
+          experimental_attachments: (message.attachments as Attachment[]) || [],
         }))
       );
       setFetchingMessages(false);
@@ -90,7 +93,9 @@ export const ChatPanel = ({ id }: Props) => {
         await addMessage(supabase, chatId, message);
       }
     },
+    sendExtraMessageFields: true,
   });
+  console.log("messages", messages);
 
   useEffect(() => {
     if (!chatId && messages.length === 2 && !generatingResponse) {
@@ -101,6 +106,46 @@ export const ChatPanel = ({ id }: Props) => {
       });
     }
   }, [chatId, messages, generatingResponse]);
+
+  const [attachments, setAttachments] = useState<Attachment[]>([]);
+  const [selectedArtifacts, setSelectedArtifacts] = useState<string[]>([]);
+
+  const { recording, transcribing, transcript, startRecording, stopRecording } =
+    useWhisper({
+      apiKey: getSettings().openaiApiKey,
+    });
+
+  useEffect(() => {
+    if (!recording && !transcribing && transcript?.text) {
+      setInput((prev) => prev + ` ${transcript.text}`);
+    }
+  }, [recording, transcribing, transcript?.text, setInput]);
+
+  const handleCapture: ReactArtifactProps["onCapture"] = ({
+    selectionImg,
+    artifactImg,
+  }) => {
+    setAttachments((prev) => [
+      ...prev,
+      {
+        contentType: "image/png",
+        url: selectionImg,
+      },
+    ]);
+
+    setSelectedArtifacts((prev) => {
+      if (prev.includes(artifactImg)) return prev;
+      return [...prev, artifactImg];
+    });
+  };
+
+  const handleRemoveAttachment: ChatInputProps["onRemoveAttachment"] = (
+    attachment
+  ) => {
+    setAttachments((prev) =>
+      prev.filter((item) => item.url !== attachment.url)
+    );
+  };
 
   const handleSend = async () => {
     const query = input.trim();
@@ -118,12 +163,32 @@ export const ChatPanel = ({ id }: Props) => {
       return;
     }
 
-    append({ role: "user", content: query });
+    const messageAttachments = [
+      ...attachments
+        .filter((item) => item.contentType?.startsWith("image"))
+        .map((item) => ({ url: item.url, contentType: item.contentType })),
+      ...selectedArtifacts.map((url) => ({ url })),
+    ];
+
+    append({
+      role: "user",
+      content: query,
+      experimental_attachments: messageAttachments,
+    });
+
     setInput("");
 
     if (chatId) {
-      await addMessage(supabase, chatId, { role: "user", content: query });
+      await addMessage(
+        supabase,
+        chatId,
+        { role: "user", content: query },
+        attachments
+      );
     }
+
+    setAttachments([]);
+    setSelectedArtifacts([]);
   };
 
   return (
@@ -135,17 +200,23 @@ export const ChatPanel = ({ id }: Props) => {
             messages={messages}
             setCurrentArtifact={setCurrentArtifact}
           />
+
           <ChatInput
             input={input}
             setInput={setInput}
             onSubmit={handleSend}
             isLoading={generatingResponse}
+            recording={recording}
+            onStartRecord={startRecording}
+            onStopRecord={stopRecording}
+            attachments={attachments}
+            onRemoveAttachment={handleRemoveAttachment}
           />
         </div>
       </div>
 
       {currentArtifact && (
-        <div className="w-full max-w-3xl h-full max-h-full flex-1 pt-6 pb-4">
+        <div className="w-full max-w-xl h-full max-h-full pt-6 pb-4">
           <ArtifactPanel
             title={currentArtifact.title}
             id={currentArtifact.id}
@@ -154,6 +225,8 @@ export const ChatPanel = ({ id }: Props) => {
             content={currentArtifact.content}
             language={currentArtifact.language}
             onClose={() => setCurrentArtifact(null)}
+            recording={recording}
+            onCapture={handleCapture}
           />
         </div>
       )}
