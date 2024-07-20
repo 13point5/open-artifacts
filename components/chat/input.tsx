@@ -24,6 +24,12 @@ import {
   updateSettings,
 } from "@/lib/userSettings";
 import { AttachmentPreviewButton } from "@/components/chat/attachment-preview-button";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui";
 
 export type Props = {
   input: string;
@@ -101,19 +107,33 @@ export const ChatInput = ({
             onChange={(e) => setInput(e.target.value)}
           />
 
-          <Button
-            onClick={() => {
-              recording ? onStopRecord() : onStartRecord();
-            }}
-            size="icon"
-            className="w-8 h-8"
-          >
-            {recording ? (
-              <PauseIcon className="w-4 h-4" />
-            ) : (
-              <MicIcon className="w-4 h-4" />
-            )}
-          </Button>
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button
+                  disabled={!getSettings().openaiApiKey}
+                  onClick={() => {
+                    recording ? onStopRecord() : onStartRecord();
+                  }}
+                  size="icon"
+                  className="w-8 h-8 disabled:pointer-events-auto"
+                >
+                  {recording ? (
+                    <PauseIcon className="w-4 h-4" />
+                  ) : (
+                    <MicIcon className="w-4 h-4" />
+                  )}
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>
+                  {getSettings().openaiApiKey
+                    ? "Click to record voice and crop artifacts for editing"
+                    : "Missing OpenAI API Key in Settings"}
+                </p>
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
 
           <Button
             onClick={onSubmit}

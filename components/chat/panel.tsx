@@ -14,7 +14,7 @@ import { Chat, Models, Attachment } from "@/app/types";
 import { ArtifactMessagePartData } from "@/lib/utils";
 import toast from "react-hot-toast";
 import { useRouter } from "next/navigation";
-import { useWhisper } from "@chengsokdara/use-whisper";
+import { useWhisperWithErrorBoundary as useWhisper } from "@/lib/hooks/use-whisper";
 import { Props as ReactArtifactProps } from "@/components/artifact/react";
 
 type Props = {
@@ -95,7 +95,6 @@ export const ChatPanel = ({ id }: Props) => {
     },
     sendExtraMessageFields: true,
   });
-  console.log("messages", messages);
 
   useEffect(() => {
     if (!chatId && messages.length === 2 && !generatingResponse) {
@@ -112,7 +111,7 @@ export const ChatPanel = ({ id }: Props) => {
 
   const { recording, transcribing, transcript, startRecording, stopRecording } =
     useWhisper({
-      apiKey: getSettings().openaiApiKey,
+      apiKey: getSettings().openaiApiKey || undefined,
     });
 
   useEffect(() => {
