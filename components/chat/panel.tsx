@@ -14,8 +14,22 @@ import { Chat, Models, Attachment } from "@/app/types";
 import { ArtifactMessagePartData } from "@/lib/utils";
 import toast from "react-hot-toast";
 import { useRouter } from "next/navigation";
-import { useWhisperWithErrorBoundary as useWhisper } from "@/lib/hooks/use-whisper";
+import { useWhisper as useRealWhisper } from "@chengsokdara/use-whisper";
 import { Props as ReactArtifactProps } from "@/components/artifact/react";
+
+type WhisperResult = ReturnType<typeof useRealWhisper>;
+
+const useFakeWhisper = (): WhisperResult => {
+  return {
+    recording: false,
+    speaking: false,
+    transcribing: false,
+    transcript: { text: "", blob: undefined },
+    pauseRecording: () => new Promise((resolve) => resolve()),
+    startRecording: () => new Promise((resolve) => resolve()),
+    stopRecording: () => new Promise((resolve) => resolve()),
+  };
+};
 
 type Props = {
   id: string | null;
@@ -109,8 +123,12 @@ export const ChatPanel = ({ id }: Props) => {
   const [attachments, setAttachments] = useState<Attachment[]>([]);
   const [selectedArtifacts, setSelectedArtifacts] = useState<string[]>([]);
 
+  const useWhispherHook = getSettings().openaiApiKey
+    ? useRealWhisper
+    : useFakeWhisper;
+
   const { recording, transcribing, transcript, startRecording, stopRecording } =
-    useWhisper({
+    useWhispherHook({
       apiKey: getSettings().openaiApiKey || undefined,
     });
 
