@@ -4,6 +4,8 @@ import { streamText, convertToCoreMessages, Message, ImagePart } from "ai";
 import { createOpenAI } from "@ai-sdk/openai";
 import { Models } from "@/app/types";
 
+export const maxDuration = 60;
+
 export async function POST(req: Request) {
   const { messages, apiKey, model } = await req.json();
 
