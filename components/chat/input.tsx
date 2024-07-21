@@ -1,5 +1,4 @@
 import { Button } from "@/components/ui/button";
-import { Label } from "@/components/ui/label";
 import { useEnterSubmit } from "@/lib/hooks/use-enter-submit";
 import {
   ArrowUpIcon,
@@ -7,8 +6,6 @@ import {
   MicIcon,
   PaperclipIcon,
   PauseIcon,
-  UploadIcon,
-  XIcon,
 } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import Textarea from "react-textarea-autosize";
@@ -20,11 +17,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Attachment, Models } from "@/app/types";
-import {
-  getSettings,
-  SettingsSchema,
-  updateSettings,
-} from "@/lib/userSettings";
+import { getSettings, updateSettings } from "@/lib/userSettings";
 import { AttachmentPreviewButton } from "@/components/chat/attachment-preview-button";
 import {
   Tooltip,
@@ -32,6 +25,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui";
+import { convertFileToBase64 } from "@/lib/utils";
 
 export type Props = {
   input: string;
@@ -59,60 +53,45 @@ export const ChatInput = ({
   onAddAttachment,
 }: Props) => {
   const inputRef = useRef<HTMLTextAreaElement>(null);
-  const { onKeyDown } = useEnterSubmit({
-    onSubmit,
-  });
+  const { onKeyDown } = useEnterSubmit({ onSubmit });
   const [model, setModel] = useState<Models>(getSettings().model);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
+  // Handle file upload button click
   const handleFileUpload = () => {
     fileInputRef.current?.click();
   };
 
-  const convertToBase64 = (file: File): Promise<string> => {
-    return new Promise((resolve, reject) => {
-      const reader = new FileReader();
-      reader.readAsDataURL(file);
-      reader.onload = () => resolve(reader.result as string);
-      reader.onerror = (error) => reject(error);
-    });
-  };
-
+  // Handle file selection and conversion to base64
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
       const filesArray = Array.from(e.target.files);
-      const attachmentsPromises = filesArray.map(async (file) => {
-        const base64 = await convertToBase64(file);
-        return {
-          url: base64,
+      const newAttachments = await Promise.all(
+        filesArray.map(async (file) => ({
+          url: await convertFileToBase64(file),
           name: file.name,
           contentType: file.type,
-        } as Attachment;
-      });
-
-      const newAttachments = await Promise.all(attachmentsPromises);
+        }))
+      );
       onAddAttachment(newAttachments);
     }
   };
 
+  // Focus on input field when component mounts
   useEffect(() => {
-    if (inputRef.current) {
-      inputRef.current.focus();
-    }
+    inputRef.current?.focus();
   }, []);
 
+  // Handle model change and update settings
   const handleModelChange = (newModel: Models) => {
     setModel(newModel);
-
-    const currentSettings = getSettings();
-    const newSettings: SettingsSchema = { ...currentSettings, model: newModel };
-
-    updateSettings(newSettings);
+    updateSettings({ ...getSettings(), model: newModel });
   };
 
   return (
-    <div className="sticky bottom-0 mx-auto w-full pt-6 ">
+    <div className="sticky bottom-0 mx-auto w-full pt-6">
       <div className="flex flex-col gap-1 bg-[#F4F4F4] p-2.5 pl-4 rounded-md border border-b-0 rounded-b-none shadow-md">
+        {/* Attachment preview */}
         {attachments && (
           <div className="flex items-center gap-2 mb-2">
             {attachments.map((attachment, index) => (
@@ -126,6 +105,7 @@ export const ChatInput = ({
         )}
 
         <div className="flex gap-2 items-start">
+          {/* Main input textarea */}
           <Textarea
             ref={inputRef}
             tabIndex={0}
@@ -142,6 +122,7 @@ export const ChatInput = ({
             onChange={(e) => setInput(e.target.value)}
           />
 
+          {/* Hidden file input */}
           <input
             type="file"
             accept="image/*"
@@ -150,6 +131,8 @@ export const ChatInput = ({
             style={{ display: "none" }}
             onChange={handleFileChange}
           />
+
+          {/* File upload button */}
           <Button
             variant="outline"
             size="icon"
@@ -159,14 +142,13 @@ export const ChatInput = ({
             <PaperclipIcon className="w-4 h-4" />
           </Button>
 
+          {/* Voice recording button */}
           <TooltipProvider>
             <Tooltip>
               <TooltipTrigger asChild>
                 <Button
                   disabled={!getSettings().openaiApiKey}
-                  onClick={() => {
-                    recording ? onStopRecord() : onStartRecord();
-                  }}
+                  onClick={() => (recording ? onStopRecord() : onStartRecord())}
                   size="icon"
                   variant="outline"
                   className="w-8 h-8 bg-transparent disabled:pointer-events-auto"
@@ -188,6 +170,7 @@ export const ChatInput = ({
             </Tooltip>
           </TooltipProvider>
 
+          {/* Submit button */}
           <Button
             onClick={onSubmit}
             size="icon"
@@ -202,11 +185,12 @@ export const ChatInput = ({
           </Button>
         </div>
 
+        {/* Model selection dropdown */}
         <Select value={model || undefined} onValueChange={handleModelChange}>
           <SelectTrigger className="w-fit bg-[#F4F4F4] flex items-center gap-2 border-none">
             <SelectValue placeholder="Select Model" />
           </SelectTrigger>
-          <SelectContent className="w-fit ">
+          <SelectContent className="w-fit">
             <SelectItem value={Models.claude}>Claude Sonnet</SelectItem>
             <SelectItem value={Models.gpt4o}>GPT 4-o</SelectItem>
             <SelectItem value={Models.gpt4turbo}>GPT-4 Turbo</SelectItem>
