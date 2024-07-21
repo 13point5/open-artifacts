@@ -36,17 +36,22 @@ type Props = {
 };
 
 export const ChatPanel = ({ id }: Props) => {
+  // Get settings and supabase instance
   const settings = getSettings();
   const { supabase, session } = useSupabase();
   const queryClient = useQueryClient();
   const router = useRouter();
 
+  // State management
   const [chatId, setChatId] = useState(id);
   const [initialMessages, setInitialMessages] = useState<Message[]>([]);
   const [fetchingMessages, setFetchingMessages] = useState(false);
   const [currentArtifact, setCurrentArtifact] =
     useState<ArtifactMessagePartData | null>(null);
+  const [attachments, setAttachments] = useState<Attachment[]>([]);
+  const [selectedArtifacts, setSelectedArtifacts] = useState<string[]>([]);
 
+  // Fetch messages for existing chat
   const fetchMessages = async () => {
     if (chatId) {
       setFetchingMessages(true);
@@ -69,6 +74,7 @@ export const ChatPanel = ({ id }: Props) => {
     fetchMessages();
   }, []);
 
+  // Create new chat mutation
   const createChatMutation = useMutation({
     mutationFn: async ({
       title,
@@ -90,6 +96,7 @@ export const ChatPanel = ({ id }: Props) => {
     },
   });
 
+  // Chat hook setup
   const {
     messages,
     input,
@@ -110,6 +117,7 @@ export const ChatPanel = ({ id }: Props) => {
     sendExtraMessageFields: true,
   });
 
+  // Create new chat when conditions are met
   useEffect(() => {
     if (!chatId && messages.length === 2 && !generatingResponse) {
       createChatMutation.mutate({
@@ -120,24 +128,23 @@ export const ChatPanel = ({ id }: Props) => {
     }
   }, [chatId, messages, generatingResponse]);
 
-  const [attachments, setAttachments] = useState<Attachment[]>([]);
-  const [selectedArtifacts, setSelectedArtifacts] = useState<string[]>([]);
-
+  // Whisper hook setup for voice input
   const useWhispherHook = getSettings().openaiApiKey
     ? useRealWhisper
     : useFakeWhisper;
-
   const { recording, transcribing, transcript, startRecording, stopRecording } =
     useWhispherHook({
       apiKey: getSettings().openaiApiKey || undefined,
     });
 
+  // Update input with transcribed text
   useEffect(() => {
     if (!recording && !transcribing && transcript?.text) {
       setInput((prev) => prev + ` ${transcript.text}`);
     }
   }, [recording, transcribing, transcript?.text, setInput]);
 
+  // Handle artifact capture
   const handleCapture: ReactArtifactProps["onCapture"] = ({
     selectionImg,
     artifactImg,
@@ -156,6 +163,7 @@ export const ChatPanel = ({ id }: Props) => {
     });
   };
 
+  // Handle attachment management
   const handleAddAttachment: ChatInputProps["onAddAttachment"] = (
     newAttachments
   ) => {
@@ -170,6 +178,7 @@ export const ChatPanel = ({ id }: Props) => {
     );
   };
 
+  // Handle sending messages
   const handleSend = async () => {
     const query = input.trim();
     if (!query) return;
@@ -219,6 +228,7 @@ export const ChatPanel = ({ id }: Props) => {
       <div className="relative flex w-full flex-1 overflow-x-hidden overflow-y-scroll pt-6">
         <div className="relative mx-auto flex h-full w-full min-w-[400px] max-w-3xl flex-1 flex-col md:px-2">
           {fetchingMessages && <Loader2Icon className="animate-spin mx-auto" />}
+
           <ChatMessageList
             messages={messages}
             setCurrentArtifact={setCurrentArtifact}
