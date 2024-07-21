@@ -3,6 +3,7 @@ import { useEnterSubmit } from "@/lib/hooks/use-enter-submit";
 import {
   ArrowDownIcon,
   ArrowUpIcon,
+  CircleStopIcon,
   Loader2Icon,
   MicIcon,
   PaperclipIcon,
@@ -41,6 +42,7 @@ export type Props = {
   onAddAttachment: (newAttachments: Attachment[]) => void;
   showScrollButton: boolean;
   handleManualScroll: () => void;
+  stopGenerating: () => void;
 };
 
 export const ChatInput = ({
@@ -56,6 +58,7 @@ export const ChatInput = ({
   onAddAttachment,
   showScrollButton,
   handleManualScroll,
+  stopGenerating,
 }: Props) => {
   const inputRef = useRef<HTMLTextAreaElement>(null);
   const { onKeyDown } = useEnterSubmit({ onSubmit });
@@ -188,13 +191,12 @@ export const ChatInput = ({
 
           {/* Submit button */}
           <Button
-            onClick={onSubmit}
+            onClick={isLoading ? stopGenerating : onSubmit}
             size="icon"
             className="w-8 h-8"
-            disabled={isLoading}
           >
             {isLoading ? (
-              <Loader2Icon className="w-4 h-4 animate-spin" />
+              <CircleStopIcon className="w-4 h-4" />
             ) : (
               <ArrowUpIcon className="w-4 h-4" />
             )}

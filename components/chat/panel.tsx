@@ -103,6 +103,7 @@ export const ChatPanel = ({ id }: Props) => {
     input,
     setInput,
     append,
+    stop: stopGenerating,
     isLoading: generatingResponse,
   } = useChat({
     initialMessages,
@@ -256,6 +257,7 @@ export const ChatPanel = ({ id }: Props) => {
             onRemoveAttachment={handleRemoveAttachment}
             showScrollButton={showScrollButton}
             handleManualScroll={handleManualScroll}
+            stopGenerating={stopGenerating}
           />
         </div>
       </div>
