@@ -156,6 +156,12 @@ export const ChatPanel = ({ id }: Props) => {
     });
   };
 
+  const handleAddAttachment: ChatInputProps["onAddAttachment"] = (
+    newAttachments
+  ) => {
+    setAttachments((prev) => [...prev, ...newAttachments]);
+  };
+
   const handleRemoveAttachment: ChatInputProps["onRemoveAttachment"] = (
     attachment
   ) => {
@@ -227,6 +233,7 @@ export const ChatPanel = ({ id }: Props) => {
             onStartRecord={startRecording}
             onStopRecord={stopRecording}
             attachments={attachments}
+            onAddAttachment={handleAddAttachment}
             onRemoveAttachment={handleRemoveAttachment}
           />
         </div>

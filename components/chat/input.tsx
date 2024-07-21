@@ -5,7 +5,9 @@ import {
   ArrowUpIcon,
   Loader2Icon,
   MicIcon,
+  PaperclipIcon,
   PauseIcon,
+  UploadIcon,
   XIcon,
 } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
@@ -41,6 +43,7 @@ export type Props = {
   onStopRecord: () => void;
   attachments: Attachment[];
   onRemoveAttachment: (attachment: Attachment) => void;
+  onAddAttachment: (newAttachments: Attachment[]) => void;
 };
 
 export const ChatInput = ({
@@ -53,12 +56,44 @@ export const ChatInput = ({
   onStopRecord,
   attachments,
   onRemoveAttachment,
+  onAddAttachment,
 }: Props) => {
   const inputRef = useRef<HTMLTextAreaElement>(null);
   const { onKeyDown } = useEnterSubmit({
     onSubmit,
   });
   const [model, setModel] = useState<Models>(getSettings().model);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const handleFileUpload = () => {
+    fileInputRef.current?.click();
+  };
+
+  const convertToBase64 = (file: File): Promise<string> => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onload = () => resolve(reader.result as string);
+      reader.onerror = (error) => reject(error);
+    });
+  };
+
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files) {
+      const filesArray = Array.from(e.target.files);
+      const attachmentsPromises = filesArray.map(async (file) => {
+        const base64 = await convertToBase64(file);
+        return {
+          url: base64,
+          name: file.name,
+          contentType: file.type,
+        } as Attachment;
+      });
+
+      const newAttachments = await Promise.all(attachmentsPromises);
+      onAddAttachment(newAttachments);
+    }
+  };
 
   useEffect(() => {
     if (inputRef.current) {
@@ -107,6 +142,23 @@ export const ChatInput = ({
             onChange={(e) => setInput(e.target.value)}
           />
 
+          <input
+            type="file"
+            accept="image/*"
+            multiple
+            ref={fileInputRef}
+            style={{ display: "none" }}
+            onChange={handleFileChange}
+          />
+          <Button
+            variant="outline"
+            size="icon"
+            className="w-8 h-8 bg-transparent"
+            onClick={handleFileUpload}
+          >
+            <PaperclipIcon className="w-4 h-4" />
+          </Button>
+
           <TooltipProvider>
             <Tooltip>
               <TooltipTrigger asChild>
@@ -116,7 +168,8 @@ export const ChatInput = ({
                     recording ? onStopRecord() : onStartRecord();
                   }}
                   size="icon"
-                  className="w-8 h-8 disabled:pointer-events-auto"
+                  variant="outline"
+                  className="w-8 h-8 bg-transparent disabled:pointer-events-auto"
                 >
                   {recording ? (
                     <PauseIcon className="w-4 h-4" />
