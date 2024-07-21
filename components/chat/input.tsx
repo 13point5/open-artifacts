@@ -166,7 +166,6 @@ export const ChatInput = ({
             <Tooltip>
               <TooltipTrigger asChild>
                 <Button
-                  disabled={!getSettings().openaiApiKey}
                   onClick={() => (recording ? onStopRecord() : onStartRecord())}
                   size="icon"
                   variant="outline"
@@ -183,7 +182,7 @@ export const ChatInput = ({
                 <p>
                   {getSettings().openaiApiKey
                     ? "Click to record voice and crop artifacts for editing"
-                    : "Missing OpenAI API Key in Settings"}
+                    : "Missing OpenAI API Key in Settings for Speech to Text"}
                 </p>
               </TooltipContent>
             </Tooltip>

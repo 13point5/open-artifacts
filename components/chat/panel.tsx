@@ -21,14 +21,24 @@ import { useScrollAnchor } from "@/lib/hooks/use-scroll-anchor";
 type WhisperResult = ReturnType<typeof useRealWhisper>;
 
 const useFakeWhisper = (): WhisperResult => {
+  const [recording, setRecording] = useState(false);
+
   return {
-    recording: false,
+    recording,
     speaking: false,
     transcribing: false,
     transcript: { text: "", blob: undefined },
     pauseRecording: () => new Promise((resolve) => resolve()),
-    startRecording: () => new Promise((resolve) => resolve()),
-    stopRecording: () => new Promise((resolve) => resolve()),
+    startRecording: () =>
+      new Promise<void>((resolve) => {
+        setRecording(true);
+        resolve();
+      }),
+    stopRecording: () =>
+      new Promise<void>((resolve) => {
+        setRecording(false);
+        resolve();
+      }),
   };
 };
 
@@ -140,7 +150,7 @@ export const ChatPanel = ({ id }: Props) => {
     : useFakeWhisper;
   const { recording, transcribing, transcript, startRecording, stopRecording } =
     useWhispherHook({
-      apiKey: getSettings().openaiApiKey || undefined,
+      apiKey: getSettings().openaiApiKey,
     });
 
   // Update input with transcribed text
@@ -215,6 +225,7 @@ export const ChatPanel = ({ id }: Props) => {
     });
 
     setInput("");
+    stopRecording();
 
     if (chatId) {
       await addMessage(
