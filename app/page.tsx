@@ -94,6 +94,27 @@ export default function LandingPage() {
           <p className="text-center text-base text-gray-400">
             &copy; 2024 Open Artifacts. All rights reserved.
           </p>
+          <div className="flex flex-wrap items-center justify-center gap-1 mt-4 text-center">
+            <span>Built by</span>
+            <a
+              href="https://www.linkedin.com/in/13point5/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="font-bold transition hover:text-gray-600 flex items-center gap-1"
+            >
+              Sriraam
+            </a>
+            <span>|</span>
+            <span>Open Sourced on</span>
+            <a
+              href="https://github.com/13point5/open-artifacts"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="font-bold transition hover:text-gray-600 flex items-center gap-1"
+            >
+              GitHub
+            </a>
+          </div>
         </div>
       </footer>
     </div>
