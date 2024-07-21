@@ -2,7 +2,7 @@
 
 ![Supabase](https://img.shields.io/badge/Supabase-3ECF8E?style=for-the-badge&logo=supabase&logoColor=white) ![Next JS](https://img.shields.io/badge/Next-black?style=for-the-badge&logo=next.js&logoColor=white) ![Shadcn](https://img.shields.io/badge/shadcn%2Fui-000000?style=for-the-badge&logo=shadcnui&logoColor=white)
 
-![Open Artifacts Demo](demo.png)
+![Open Artifacts Demo](public/demo.png)
 
 Open Artifacts is a free, open-source project that clones the functionality of [Claude.ai](https://claude.ai) while supporting the generation of Artifacts using the user's Claude API key.
 

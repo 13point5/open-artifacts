@@ -28,6 +28,7 @@ import { Loader2Icon } from "lucide-react";
 import toast from "react-hot-toast";
 import { SignInFooter, SignUpFooter } from "@/components/auth-form-footers";
 import { SocialFooter } from "@/components/social-footer";
+import Link from "next/link";
 
 const formSchema = z.object({
   email: z.string(),
@@ -77,7 +78,9 @@ const ForgotPasswordForm = () => {
 
   return (
     <main className="flex flex-col gap-6 items-center w-full h-screen pt-8 px-4">
-      <h1 className="text-4xl font-bold">Open Artifacts</h1>
+      <Link href="/">
+        <h1 className="text-4xl font-bold">Open Artifacts</h1>
+      </Link>
       <Card className="max-w-sm w-full">
         <CardHeader className="space-y-1">
           <CardTitle className="text-2xl">Reset Password</CardTitle>
