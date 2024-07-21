@@ -17,30 +17,7 @@ import { useWhisper as useRealWhisper } from "@chengsokdara/use-whisper";
 import { Props as ReactArtifactProps } from "@/components/artifact/react";
 import { useEffect, useState } from "react";
 import { useScrollAnchor } from "@/lib/hooks/use-scroll-anchor";
-
-type WhisperResult = ReturnType<typeof useRealWhisper>;
-
-const useFakeWhisper = (): WhisperResult => {
-  const [recording, setRecording] = useState(false);
-
-  return {
-    recording,
-    speaking: false,
-    transcribing: false,
-    transcript: { text: "", blob: undefined },
-    pauseRecording: () => new Promise((resolve) => resolve()),
-    startRecording: () =>
-      new Promise<void>((resolve) => {
-        setRecording(true);
-        resolve();
-      }),
-    stopRecording: () =>
-      new Promise<void>((resolve) => {
-        setRecording(false);
-        resolve();
-      }),
-  };
-};
+import { useFakeWhisper } from "@/lib/hooks/use-fake-whisper";
 
 type Props = {
   id: string | null;
