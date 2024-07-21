@@ -1,6 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { useEnterSubmit } from "@/lib/hooks/use-enter-submit";
 import {
+  ArrowDownIcon,
   ArrowUpIcon,
   Loader2Icon,
   MicIcon,
@@ -38,6 +39,8 @@ export type Props = {
   attachments: Attachment[];
   onRemoveAttachment: (attachment: Attachment) => void;
   onAddAttachment: (newAttachments: Attachment[]) => void;
+  showScrollButton: boolean;
+  handleManualScroll: () => void;
 };
 
 export const ChatInput = ({
@@ -51,6 +54,8 @@ export const ChatInput = ({
   attachments,
   onRemoveAttachment,
   onAddAttachment,
+  showScrollButton,
+  handleManualScroll,
 }: Props) => {
   const inputRef = useRef<HTMLTextAreaElement>(null);
   const { onKeyDown } = useEnterSubmit({ onSubmit });
@@ -89,8 +94,19 @@ export const ChatInput = ({
   };
 
   return (
-    <div className="sticky bottom-0 mx-auto w-full pt-6">
-      <div className="flex flex-col gap-1 bg-[#F4F4F4] p-2.5 pl-4 rounded-md border border-b-0 rounded-b-none shadow-md">
+    <div className="sticky bottom-0 mx-auto w-full pt-6 flex flex-col gap-4 items-center">
+      {showScrollButton && (
+        <Button
+          onClick={handleManualScroll}
+          variant="outline"
+          size="icon"
+          className="rounded-full shadow-lg w-8 h-8"
+        >
+          <ArrowDownIcon className="h-4 w-4" />
+        </Button>
+      )}
+
+      <div className="w-full flex flex-col gap-1 bg-[#F4F4F4] p-2.5 pl-4 rounded-md border border-b-0 rounded-b-none shadow-md">
         {/* Attachment preview */}
         {attachments && (
           <div className="flex items-center gap-2 mb-2">

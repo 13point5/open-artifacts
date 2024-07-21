@@ -3,7 +3,6 @@
 import { ArtifactPanel } from "@/components/artifact";
 import { ChatInput, Props as ChatInputProps } from "@/components/chat/input";
 import { ChatMessageList } from "@/components/chat/message-list";
-import { useEffect, useState } from "react";
 import { Message, useChat } from "ai/react";
 import { getSettings } from "@/lib/userSettings";
 import { addMessage, createChat, getChatMessages } from "@/lib/db";
@@ -16,6 +15,8 @@ import toast from "react-hot-toast";
 import { useRouter } from "next/navigation";
 import { useWhisper as useRealWhisper } from "@chengsokdara/use-whisper";
 import { Props as ReactArtifactProps } from "@/components/artifact/react";
+import { useEffect, useState } from "react";
+import { useScrollAnchor } from "@/lib/hooks/use-scroll-anchor";
 
 type WhisperResult = ReturnType<typeof useRealWhisper>;
 
@@ -116,6 +117,10 @@ export const ChatPanel = ({ id }: Props) => {
     },
     sendExtraMessageFields: true,
   });
+
+  // Scroll as new messages are added
+  const { messagesRef, scrollRef, showScrollButton, handleManualScroll } =
+    useScrollAnchor(messages);
 
   // Create new chat when conditions are met
   useEffect(() => {
@@ -225,13 +230,17 @@ export const ChatPanel = ({ id }: Props) => {
 
   return (
     <>
-      <div className="relative flex w-full flex-1 overflow-x-hidden overflow-y-scroll pt-6">
+      <div
+        className="relative flex w-full flex-1 overflow-x-hidden overflow-y-scroll pt-6"
+        ref={scrollRef}
+      >
         <div className="relative mx-auto flex h-full w-full min-w-[400px] max-w-3xl flex-1 flex-col md:px-2">
           {fetchingMessages && <Loader2Icon className="animate-spin mx-auto" />}
 
           <ChatMessageList
             messages={messages}
             setCurrentArtifact={setCurrentArtifact}
+            containerRef={messagesRef}
           />
 
           <ChatInput
@@ -245,6 +254,8 @@ export const ChatPanel = ({ id }: Props) => {
             attachments={attachments}
             onAddAttachment={handleAddAttachment}
             onRemoveAttachment={handleRemoveAttachment}
+            showScrollButton={showScrollButton}
+            handleManualScroll={handleManualScroll}
           />
         </div>
       </div>
