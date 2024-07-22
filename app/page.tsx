@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 export default function LandingPage() {
   return (
     <div className="min-h-screen flex flex-col">
-      <header className="bg-white shadow-sm">
+      <header className="bg-white shadow-sm sticky top-0 z-10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex flex-col sm:flex-row justify-between items-center">
           <h1 className="text-3xl font-bold text-gray-900 mb-4 sm:mb-0">
             Open Artifacts
@@ -85,6 +85,47 @@ export default function LandingPage() {
               height={675}
               className="rounded-lg shadow-2xl pt-1"
             />
+          </div>
+
+          <div className="mt-20 flex flex-col items-center">
+            <h3 className="text-3xl font-bold text-gray-900 mb-6 text-center">
+              📸 Crop and 🔊 Talk: Iterate Naturally
+            </h3>
+            <p className="max-w-lg text-center text-lg text-gray-600 mb-8">
+              Our Crop and Talk feature allows you to visually select areas of
+              your artifacts and say or type your changes, creating a more
+              natural and context-aware iteration process.
+            </p>
+            <div className="relative">
+              <Image
+                src="/crop-and-talk.png"
+                alt="Crop and Talk Feature"
+                width={1200}
+                height={675}
+                className="rounded-lg shadow-2xl"
+              />
+            </div>
+
+            <div className="mt-5 max-w-md mx-auto sm:flex sm:justify-center md:mt-10">
+              <div className="rounded-md shadow">
+                <Link href="/new">
+                  <Button size="lg" className="w-full">
+                    Get Started
+                  </Button>
+                </Link>
+              </div>
+              <div className="mt-3 rounded-md shadow sm:mt-0 sm:ml-3">
+                <a
+                  href="https://github.com/13point5/open-artifacts"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  <Button variant="outline" size="lg" className="w-full">
+                    View on GitHub
+                  </Button>
+                </a>
+              </div>
+            </div>
           </div>
         </div>
       </main>
