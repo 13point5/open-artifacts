@@ -67,3 +67,9 @@
     @apply bg-background text-foreground;
   }
 }
+
+@media (max-width: 639px) {
+  #menu-toggle:checked + nav {
+    display: flex;
+  }
+}
