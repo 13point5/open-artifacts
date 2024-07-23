@@ -31,6 +31,8 @@ import {
 } from "@/components/auth-form-footers";
 import { SocialFooter } from "@/components/social-footer";
 import Link from "next/link";
+import { Separator } from "@/components/ui/separator";
+import { GoogleOAuthButton } from "@/components/google-oauth-button";
 
 const formSchema = z.object({
   email: z.string(),
@@ -81,6 +83,22 @@ const SignInForm = () => {
     });
   };
 
+  const handleGoogleSignIn = async () => {
+    const { error } = await supabase.auth.signInWithOAuth({
+      provider: "google",
+      options: {
+        redirectTo: `${window.location.origin}/api/auth/callback`,
+      },
+    });
+
+    if (error) {
+      console.error(error);
+      toast.error("Could not Sign In", {
+        position: "top-right",
+      });
+    }
+  };
+
   return (
     <main className="flex flex-col gap-6 items-center w-full h-screen pt-8 px-4">
       <Link href="/">
@@ -91,9 +109,19 @@ const SignInForm = () => {
           <CardTitle className="text-2xl">Sign In</CardTitle>
         </CardHeader>
 
-        <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-2">
-            <CardContent className="grid gap-6">
+        <CardContent className="grid gap-4">
+          <GoogleOAuthButton onClick={handleGoogleSignIn}>
+            Sign in with Google
+          </GoogleOAuthButton>
+
+          <div className="flex items-center gap-4">
+            <Separator className="flex-1" />
+            <span className="text-neutral-500 text-sm">OR</span>
+            <Separator className="flex-1" />
+          </div>
+
+          <Form {...form}>
+            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
               <FormField
                 control={form.control}
                 name="email"
@@ -131,14 +159,14 @@ const SignInForm = () => {
 
                 {formStatus !== FormStatus.Loading && "Sign In"}
               </Button>
-            </CardContent>
+            </form>
+          </Form>
+        </CardContent>
 
-            <CardFooter className="flex flex-col gap-2">
-              <ForgotPasswordFooter />
-              <SignUpFooter />
-            </CardFooter>
-          </form>
-        </Form>
+        <CardFooter className="flex flex-col gap-2">
+          <ForgotPasswordFooter />
+          <SignUpFooter />
+        </CardFooter>
       </Card>
 
       <SocialFooter />
