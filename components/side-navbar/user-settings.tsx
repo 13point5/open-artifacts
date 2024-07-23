@@ -69,7 +69,7 @@ export const UserSettings = ({ showLabel = false }: Props) => {
               name="claudeApiKey"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Claude API Key</FormLabel>
+                  <FormLabel>Anthropic API Key</FormLabel>
                   <FormControl>
                     <Input {...field} type="password" />
                   </FormControl>

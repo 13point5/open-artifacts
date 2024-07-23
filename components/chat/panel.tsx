@@ -94,10 +94,6 @@ export const ChatPanel = ({ id }: Props) => {
     isLoading: generatingResponse,
   } = useChat({
     initialMessages,
-    body: {
-      apiKey: settings.claudeApiKey,
-      model: settings.model,
-    },
     onFinish: async (message) => {
       if (chatId) {
         await addMessage(supabase, chatId, message);
@@ -195,11 +191,21 @@ export const ChatPanel = ({ id }: Props) => {
       ...selectedArtifacts.map((url) => ({ url })),
     ];
 
-    append({
-      role: "user",
-      content: query,
-      experimental_attachments: messageAttachments,
-    });
+    append(
+      {
+        role: "user",
+        content: query,
+        experimental_attachments: messageAttachments,
+      },
+      {
+        body: {
+          model: settings.model,
+          apiKey: settings.model.startsWith("gpt")
+            ? settings.openaiApiKey
+            : settings.claudeApiKey,
+        },
+      }
+    );
 
     setInput("");
     stopRecording();
