@@ -11,6 +11,7 @@ export default function LandingPage() {
           <h1 className="text-3xl font-bold text-gray-900 mb-4 sm:mb-0">
             Open Artifacts
           </h1>
+
           <nav className="flex flex-row items-center gap-4">
             <Link href="/signin">
               <Button variant="ghost">Sign In</Button>
@@ -28,44 +29,21 @@ export default function LandingPage() {
             <h2 className="text-4xl font-extrabold text-[#F4FFFA00] bg-clip-text bg-gradient-to-b from-gray-900 to-gray-600 sm:text-5xl md:text-6xl">
               Create Artifacts with any LLM
             </h2>
-            <p className="mt-3 max-w-md mx-auto text-base text-gray-500 sm:text-lg md:mt-5 md:text-xl md:max-w-3xl">
-              Open Artifacts is a{" "}
-              <strong className="text-gray-900">free</strong>, open-source
-              project that supports generating Artifacts inspired by{" "}
-              <Link
-                href="https://www.anthropic.com/"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                <strong>Anthropic</strong>
-              </Link>{" "}
-              using{" "}
-              <Link
-                href="https://www.claude.ai"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                <strong>Claude</strong>
-              </Link>{" "}
-              and{" "}
-              <Link
-                href="https://www.openai.com"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                <strong>OpenAI</strong>
-              </Link>{" "}
-              models with your own API keys.
+
+            <p className="mt-3 max-w-md mx-auto text-base text-gray-500 sm:text-lg md:mt-4 md:text-xl md:max-w-3xl">
+              Generate Artifacts with your own API keys.
             </p>
+
             <div className="mt-5 max-w-md mx-auto sm:flex sm:justify-center md:mt-8">
               <div className="rounded-md shadow">
                 <Link href="/new">
                   <Button size="lg" className="w-full">
                     <RocketIcon className="mr-2 h-4 w-4" />
-                    Get Started
+                    Get Started for FREE
                   </Button>
                 </Link>
               </div>
+
               <div className="mt-3 rounded-md shadow sm:mt-0 sm:ml-3">
                 <a
                   href="https://github.com/13point5/open-artifacts"
@@ -77,6 +55,27 @@ export default function LandingPage() {
                     View on GitHub
                   </Button>
                 </a>
+              </div>
+            </div>
+
+            <div className="mt-12 flex flex-col items-center gap-4">
+              <h3 className="text-md font-medium text-gray-500 text-center">
+                Supported LLM Providers
+              </h3>
+              <div className="flex flex-row items-center gap-8">
+                <Image
+                  src="/anthropic.svg"
+                  alt="Anthropic"
+                  width={143}
+                  height={16}
+                />
+
+                <Image
+                  src="/openai.svg"
+                  alt="OpenAI"
+                  width={118 * 0.75}
+                  height={32 * 0.75}
+                />
               </div>
             </div>
           </div>
