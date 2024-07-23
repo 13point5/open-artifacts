@@ -1,18 +1,19 @@
-# Open Artifacts
+# 🦉 Open Artifacts
 
 ![Supabase](https://img.shields.io/badge/Supabase-3ECF8E?style=for-the-badge&logo=supabase&logoColor=white) ![Next JS](https://img.shields.io/badge/Next-black?style=for-the-badge&logo=next.js&logoColor=white) ![Shadcn](https://img.shields.io/badge/shadcn%2Fui-000000?style=for-the-badge&logo=shadcnui&logoColor=white)
 
 ![Open Artifacts Demo](public/demo.png)
+![Open Artifacts Demo 2](public/crop-and-talk.png)
 
-Open Artifacts is a free, open-source project that clones the functionality of [Claude.ai](https://claude.ai) while supporting the generation of Artifacts using the user's Claude API key.
+Open Artifacts is a free, open-source project that clones the functionality of [Claude](https://claude.ai) while supporting the generation of Artifacts with [Anthropic](https://www.anthropic.com/) and [OpenAI](https://openai.com/) LLMs using the user's API keys.
 
 The Artifact viewer is implemented using [Open Artifacts Renderer](https://github.com/13point5/open-artifacts-renderer).
 
 ## Features
 
-- Claude.ai-like interface and functionality
-- Support for Artifact generation
-- Utilizes user's Claude API key for interactions
+- 🎨 Generate Artifacts with [Anthropic](https://www.anthropic.com/) and [OpenAI](https://openai.com/) LLMs
+- 📸 Crop and 🔊 Talk to iteratively edit Artifacts
+- 🎛️ Utilizes user's API keys for interactions
 
 ## Tech Stack
 
