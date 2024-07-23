@@ -9,7 +9,7 @@ import {
   MessagePart as MessagePartType,
   parseMessage,
 } from "@/lib/utils";
-import { CodeIcon, Loader2Icon } from "lucide-react";
+import { BotIcon, CodeIcon, Loader2Icon, UserIcon } from "lucide-react";
 
 const getDisplayNameFromRole = (
   role: ChatMessageRoles,
@@ -39,37 +39,48 @@ type Props = {
 
 export const ChatMessage = ({
   role,
-  model,
   text,
   attachments,
   setCurrentArtifact,
 }: Props) => {
   return (
     <div
-      className={`flex flex-col gap-2 px-4 py-2 rounded-md ${
-        role === "user" ? "bg-[#F4F4F4]" : "bg-white"
+      className={`flex items-start gap-4 px-4 py-2 rounded-md ${
+        role === "tool" ? "bg-[#F4F4F4]" : "bg-white"
       }`}
     >
-      <span className="font-semibold text-sm">
-        {role === "user" ? "Me" : "Artifacto"}
-      </span>
-
-      <div className="flex items-center gap-2 flex-wrap">
-        {attachments.map((attachment, index) => (
-          <AttachmentPreviewButton key={index} value={attachment} />
-        ))}
+      <div
+        className={`border rounded-md p-1 ${
+          role === "user" ? "bg-white" : "bg-black border-black"
+        }`}
+      >
+        {role === "user" ? (
+          <UserIcon size={20} />
+        ) : (
+          <BotIcon size={20} color="white" />
+        )}
       </div>
 
-      {role === "user" && <Markdown text={text} />}
+      <div className="flex flex-col gap-2">
+        {attachments.length > 0 && (
+          <div className="flex items-center gap-2 flex-wrap">
+            {attachments.map((attachment, index) => (
+              <AttachmentPreviewButton key={index} value={attachment} />
+            ))}
+          </div>
+        )}
 
-      {role === "assistant" &&
-        parseMessage(text).map((part, index) => (
-          <MessagePart
-            data={part}
-            key={index}
-            setCurrentArtifact={setCurrentArtifact}
-          />
-        ))}
+        {role === "user" && <Markdown text={text} />}
+
+        {role === "assistant" &&
+          parseMessage(text).map((part, index) => (
+            <MessagePart
+              data={part}
+              key={index}
+              setCurrentArtifact={setCurrentArtifact}
+            />
+          ))}
+      </div>
     </div>
   );
 };
