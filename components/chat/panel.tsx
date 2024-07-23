@@ -174,7 +174,7 @@ export const ChatPanel = ({ id }: Props) => {
 
     const settings = getSettings();
 
-    if (settings.model === Models.claude && !settings.claudeApiKey) {
+    if (settings.model === Models.claude && !settings.anthropicApiKey) {
       toast.error("Please enter your Claude API Key");
       return;
     }
@@ -202,7 +202,7 @@ export const ChatPanel = ({ id }: Props) => {
           model: settings.model,
           apiKey: settings.model.startsWith("gpt")
             ? settings.openaiApiKey
-            : settings.claudeApiKey,
+            : settings.anthropicApiKey,
         },
       }
     );

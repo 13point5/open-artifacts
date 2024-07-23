@@ -4,7 +4,7 @@ import { z } from "zod";
 export const settingsLocalStorageKey = "openArtifacts:settings";
 
 export const settingsSchema = z.object({
-  claudeApiKey: z.string(),
+  anthropicApiKey: z.string(),
   openaiApiKey: z.string(),
   model: z.nativeEnum(Models),
 });
@@ -12,7 +12,7 @@ export const settingsSchema = z.object({
 export type SettingsSchema = z.infer<typeof settingsSchema>;
 
 const defaultSettings: SettingsSchema = {
-  claudeApiKey: "",
+  anthropicApiKey: "",
   openaiApiKey: "",
   model: Models.claude,
 };
