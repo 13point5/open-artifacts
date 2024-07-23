@@ -45,7 +45,7 @@ export const ChatMessage = ({
 }: Props) => {
   return (
     <div
-      className={`flex items-start gap-2 px-4 py-2 rounded-md ${
+      className={`flex items-start gap-2 px-2 py-2 rounded-md ${
         role === "tool" ? "bg-[#F4F4F4]" : "bg-white"
       }`}
     >

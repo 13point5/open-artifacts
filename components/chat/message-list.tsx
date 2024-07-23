@@ -21,7 +21,7 @@ export const ChatMessageList = ({
   return (
     <div
       ref={containerRef}
-      className="flex-1 flex flex-col gap-4 px-4 max-w-3xl mx-auto w-full pt-1"
+      className="flex-1 flex flex-col gap-4 max-w-3xl mx-auto w-full pt-1"
     >
       {messages.map((message, index) => (
         <>
