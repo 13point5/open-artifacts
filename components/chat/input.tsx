@@ -209,7 +209,8 @@ export const ChatInput = ({
           </SelectTrigger>
           <SelectContent className="w-fit">
             <SelectItem value={Models.claude}>Claude Sonnet</SelectItem>
-            <SelectItem value={Models.gpt4o}>GPT 4-o</SelectItem>
+            <SelectItem value={Models.gpt4oMini}>GPT-4o Mini</SelectItem>
+            <SelectItem value={Models.gpt4o}>GPT-4o</SelectItem>
             <SelectItem value={Models.gpt4turbo}>GPT-4 Turbo</SelectItem>
             <SelectItem value={Models.gpt35turbo}>GPT-3.5 Turbo</SelectItem>
           </SelectContent>

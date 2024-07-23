@@ -5,7 +5,8 @@ export type ChatMessageRoles = Message["role"];
 
 export enum Models {
   claude = "claude",
-  gpt4o = "gpt4-o",
+  gpt4o = "gpt-4o",
+  gpt4oMini = "gpt-4o-mini",
   gpt35turbo = "gpt-3.5-turbo",
   gpt4turbo = "gpt-4-turbo",
 }
