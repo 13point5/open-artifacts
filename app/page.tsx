@@ -1,6 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
+import { GithubIcon, RocketIcon } from "lucide-react";
 
 export default function LandingPage() {
   return (
@@ -24,7 +25,7 @@ export default function LandingPage() {
       <main className="flex-grow">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
           <div className="text-center mb-12">
-            <h2 className="text-4xl font-extrabold text-gray-900 sm:text-5xl md:text-6xl">
+            <h2 className="text-4xl font-extrabold text-[#F4FFFA00] bg-clip-text bg-gradient-to-b from-gray-900 to-gray-600 sm:text-5xl md:text-6xl">
               Create Artifacts with any LLM
             </h2>
             <p className="mt-3 max-w-md mx-auto text-base text-gray-500 sm:text-lg md:mt-5 md:text-xl md:max-w-3xl">
@@ -60,6 +61,7 @@ export default function LandingPage() {
               <div className="rounded-md shadow">
                 <Link href="/new">
                   <Button size="lg" className="w-full">
+                    <RocketIcon className="mr-2 h-4 w-4" />
                     Get Started
                   </Button>
                 </Link>
@@ -71,6 +73,7 @@ export default function LandingPage() {
                   rel="noopener noreferrer"
                 >
                   <Button variant="outline" size="lg" className="w-full">
+                    <GithubIcon className="mr-2 h-4 w-4" />
                     View on GitHub
                   </Button>
                 </a>
