@@ -17,3 +17,8 @@ export type Attachment = {
   url: string;
   name?: string;
 };
+
+export enum OAuthProviders {
+  google = "google",
+  github = "github",
+}

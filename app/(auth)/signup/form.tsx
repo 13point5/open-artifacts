@@ -28,8 +28,9 @@ import toast from "react-hot-toast";
 import { Loader2Icon } from "lucide-react";
 import { SocialFooter } from "@/components/social-footer";
 import Link from "next/link";
-import { GoogleOAuthButton } from "@/components/google-oauth-button";
 import { Separator } from "@/components/ui/separator";
+import { OAuthProviderButton } from "@/components/oauth-provider-button";
+import { OAuthProviders } from "@/app/types";
 
 enum FormStatus {
   Idle,
@@ -87,9 +88,9 @@ const SignUpForm = () => {
     setFormStatus(FormStatus.Success);
   };
 
-  const handleGoogleSignUp = async () => {
+  const handleOAuthSignIn = async (provider: OAuthProviders) => {
     const { error } = await supabase.auth.signInWithOAuth({
-      provider: "google",
+      provider,
       options: {
         redirectTo: `${window.location.origin}/api/auth/callback`,
       },
@@ -97,10 +98,18 @@ const SignUpForm = () => {
 
     if (error) {
       console.error(error);
-      toast.error("Could not Sign Up", {
+      toast.error("Could not Sign In", {
         position: "top-right",
       });
     }
+  };
+
+  const handleGoogleSignIn = () => {
+    handleOAuthSignIn(OAuthProviders.google);
+  };
+
+  const handleGitHubSignIn = () => {
+    handleOAuthSignIn(OAuthProviders.github);
   };
 
   return (
@@ -115,9 +124,19 @@ const SignUpForm = () => {
         </CardHeader>
 
         <CardContent className="grid gap-4">
-          <GoogleOAuthButton onClick={handleGoogleSignUp}>
+          <OAuthProviderButton
+            provider={OAuthProviders.google}
+            onClick={handleGoogleSignIn}
+          >
             Sign up with Google
-          </GoogleOAuthButton>
+          </OAuthProviderButton>
+
+          <OAuthProviderButton
+            provider={OAuthProviders.github}
+            onClick={handleGitHubSignIn}
+          >
+            Sign in with GitHub
+          </OAuthProviderButton>
 
           <div className="flex items-center gap-4">
             <Separator className="flex-1" />
@@ -126,7 +145,7 @@ const SignUpForm = () => {
           </div>
 
           <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-2">
+            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
               <FormField
                 control={form.control}
                 name="full_name"

@@ -77,12 +77,7 @@ export const SideNavBar = () => {
             target="_blank"
             className="text-black flex items-center gap-4 px-1"
           >
-            <Image
-              src="/github-mark.svg"
-              height="24"
-              width="24"
-              alt="github logo"
-            />
+            <Image src="/github.svg" height="24" width="24" alt="github logo" />
             <span className="text-sm font-medium">GitHub Repo</span>
           </a>
           <UserSettings showLabel />
@@ -118,12 +113,7 @@ export const SideNavBar = () => {
           target="_blank"
           className="text-black"
         >
-          <Image
-            src="/github-mark.svg"
-            height="24"
-            width="24"
-            alt="github logo"
-          />
+          <Image src="/github.svg" height="24" width="24" alt="github logo" />
         </a>
         <UserSettings />
         <UserButton />

@@ -168,7 +168,13 @@ const CTABar = () => (
         rel="noopener noreferrer"
       >
         <Button variant="outline" size="lg" className="w-full">
-          <GithubIcon className="mr-2 h-4 w-4" />
+          <Image
+            src="/github.svg"
+            alt="GitHub"
+            width={20}
+            height={20}
+            className="mr-2"
+          />
           View on GitHub
         </Button>
       </a>

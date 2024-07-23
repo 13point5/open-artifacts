@@ -32,7 +32,8 @@ import {
 import { SocialFooter } from "@/components/social-footer";
 import Link from "next/link";
 import { Separator } from "@/components/ui/separator";
-import { GoogleOAuthButton } from "@/components/google-oauth-button";
+import { OAuthProviderButton } from "@/components/oauth-provider-button";
+import { OAuthProviders } from "@/app/types";
 
 const formSchema = z.object({
   email: z.string(),
@@ -83,9 +84,9 @@ const SignInForm = () => {
     });
   };
 
-  const handleGoogleSignIn = async () => {
+  const handleOAuthSignIn = async (provider: OAuthProviders) => {
     const { error } = await supabase.auth.signInWithOAuth({
-      provider: "google",
+      provider,
       options: {
         redirectTo: `${window.location.origin}/api/auth/callback`,
       },
@@ -99,6 +100,14 @@ const SignInForm = () => {
     }
   };
 
+  const handleGoogleSignIn = () => {
+    handleOAuthSignIn(OAuthProviders.google);
+  };
+
+  const handleGitHubSignIn = () => {
+    handleOAuthSignIn(OAuthProviders.github);
+  };
+
   return (
     <main className="flex flex-col gap-6 items-center w-full h-screen pt-8 px-4">
       <Link href="/">
@@ -110,9 +119,19 @@ const SignInForm = () => {
         </CardHeader>
 
         <CardContent className="grid gap-4">
-          <GoogleOAuthButton onClick={handleGoogleSignIn}>
+          <OAuthProviderButton
+            provider={OAuthProviders.google}
+            onClick={handleGoogleSignIn}
+          >
             Sign in with Google
-          </GoogleOAuthButton>
+          </OAuthProviderButton>
+
+          <OAuthProviderButton
+            provider={OAuthProviders.github}
+            onClick={handleGitHubSignIn}
+          >
+            Sign in with GitHub
+          </OAuthProviderButton>
 
           <div className="flex items-center gap-4">
             <Separator className="flex-1" />
