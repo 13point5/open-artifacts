@@ -19,6 +19,7 @@ import { ArtifactMessagePartData } from "@/lib/utils";
 import { CheckIcon, ClipboardIcon, XIcon } from "lucide-react";
 import { useState } from "react";
 import { Props as ReactArtifactProps } from "@/components/artifact/react";
+import { HTMLArtifact } from "@/components/artifact/html";
 
 type Props = {
   onClose: () => void;
@@ -27,6 +28,8 @@ type Props = {
 } & ArtifactMessagePartData;
 
 export type ArtifactMode = "code" | "preview";
+
+const artifactPreviewSupportedTypes = ["text/html", "application/react"];
 
 export const ArtifactPanel = ({
   type,
@@ -49,23 +52,27 @@ export const ArtifactPanel = ({
     copyToClipboard(content);
   };
 
+  console.log({ type, title, language, content });
+
   return (
     <Card className="w-full border-none rounded-none flex flex-col h-full max-h-full">
       <CardHeader className="bg-slate-50 rounded-lg border rounded-b-none py-2 px-4 flex flex-row items-center gap-4 justify-between space-y-0">
         <span className="font-semibold">{title || "Generating..."}</span>
 
         <div className="flex gap-2 items-center">
-          {type?.includes("react") && !generating && (
-            <Tabs
-              value={mode}
-              onValueChange={(value) => setMode(value as ArtifactMode)}
-            >
-              <TabsList className="bg-slate-200">
-                <TabsTrigger value="preview">Preview</TabsTrigger>
-                <TabsTrigger value="code">Code</TabsTrigger>
-              </TabsList>
-            </Tabs>
-          )}
+          {type &&
+            artifactPreviewSupportedTypes.includes(type) &&
+            !generating && (
+              <Tabs
+                value={mode}
+                onValueChange={(value) => setMode(value as ArtifactMode)}
+              >
+                <TabsList className="bg-slate-200">
+                  <TabsTrigger value="preview">Preview</TabsTrigger>
+                  <TabsTrigger value="code">Code</TabsTrigger>
+                </TabsList>
+              </Tabs>
+            )}
 
           <Button onClick={onClose} size="icon" variant="ghost">
             <XIcon className="w-4 h-4" />
@@ -77,14 +84,14 @@ export const ArtifactPanel = ({
         id="artifact-content"
         className="border-l border-r p-0 w-full flex-1 max-h-full overflow-hidden relative"
       >
-        {type?.includes("markdown") && (
+        {type === "text/markdown" && (
           <Markdown
             text={content}
             className="h-full max-h-full overflow-auto py-4 px-4"
           />
         )}
 
-        {type?.includes("code") && language && (
+        {type === "application/code" && language && (
           <CodeBlock
             language={language}
             value={content}
@@ -93,8 +100,17 @@ export const ArtifactPanel = ({
           />
         )}
 
-        {type?.includes("react") && (
+        {type === "application/react" && (
           <ReactArtifact
+            code={content}
+            mode={mode}
+            recording={recording}
+            onCapture={onCapture}
+          />
+        )}
+
+        {type === "text/html" && (
+          <HTMLArtifact
             code={content}
             mode={mode}
             recording={recording}
